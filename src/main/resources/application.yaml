@@ -1,0 +1,25 @@
+server:
+  port:8080
+
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  autoconfigure:
+    exclude:org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+  datasource:
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+#    url: jdbc:mariadb://localhost:3306/BackEndProject_1_verSoh?useUnicode=true&characterEncoding=UTF-8
+
+  jpa:
+    show-sql: true
+
+jwtpassword:
+  source: ${JWT_SECRET_KEY}
+
+  logging:
+    level: debug
