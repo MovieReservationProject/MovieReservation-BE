@@ -11,12 +11,15 @@ import com.github.moviereservationbe.service.exceptions.BadRequestException;
 import com.github.moviereservationbe.service.exceptions.NotFoundException;
 import com.github.moviereservationbe.web.DTO.auth.LoginRequestDto;
 import com.github.moviereservationbe.web.DTO.auth.SignUpRequestDto;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.NotAcceptableStatusException;
 
@@ -72,5 +75,15 @@ public class AuthService {
             e.printStackTrace();
             throw new NotAcceptableStatusException("Login not possible");
         }
+    }
+
+    public boolean logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        Authentication auth= SecurityContextHolder.getContext().getAuthentication();
+        if(auth != null){
+            String currentToken= jwtTokenProvider.resolveToken(httpServletRequest);
+            jwtTokenProvider.addToBlackList(currentToken);
+            new SecurityContextLogoutHandler().logout(httpServletRequest, httpServletResponse, auth);
+        }
+        return true;
     }
 }

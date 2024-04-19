@@ -4,6 +4,7 @@ import com.github.moviereservationbe.service.service.AuthService;
 import com.github.moviereservationbe.web.DTO.ResponseDto;
 import com.github.moviereservationbe.web.DTO.auth.LoginRequestDto;
 import com.github.moviereservationbe.web.DTO.auth.SignUpRequestDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,8 +22,8 @@ public class SignController {
     @PostMapping("/sign-up")
     public ResponseDto register(@RequestBody SignUpRequestDto signUpRequestDto){
         boolean isSuccess= authService.signUp(signUpRequestDto);
-        String message= isSuccess ? "SignUp success" : "SignUp fail";
-        return new ResponseDto(HttpStatus.OK.value(), message);
+        if(isSuccess) return new ResponseDto(HttpStatus.OK.value(), "SignUp successful");
+        else return new ResponseDto(HttpStatus.BAD_REQUEST.value(), "SignUp fail");
     }
 
     @PostMapping("/login")
@@ -30,5 +31,12 @@ public class SignController {
         String token= authService.login(loginRequestDto);
         httpServletResponse.setHeader("Token", token);
         return new ResponseDto(HttpStatus.OK.value(), "Login Success");
+    }
+
+    @PostMapping("/logout")
+    public ResponseDto logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
+        boolean isSuccess= authService.logout(httpServletRequest, httpServletResponse);
+        if(isSuccess) return new ResponseDto(HttpStatus.OK.value(), "Logout successful" );
+        else return new ResponseDto(HttpStatus.BAD_REQUEST.value(), "Logout fail");
     }
 }
