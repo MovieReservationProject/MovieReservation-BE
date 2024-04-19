@@ -14,7 +14,7 @@ import java.lang.NullPointerException;
 public class ExceptionControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(SoldOutException.class)
+    @ExceptionHandler(BadRequestException.class)
     public String handleBadRequestException(BadRequestException bre){
         log.error("Bad Request Exception: "+ bre.getMessage());
         return bre.getMessage();

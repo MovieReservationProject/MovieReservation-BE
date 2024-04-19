@@ -5,6 +5,7 @@ import com.github.moviereservationbe.repository.user.User;
 import com.github.moviereservationbe.repository.user.UserJpa;
 import com.github.moviereservationbe.repository.userDetails.CustomUserDetails;
 import com.github.moviereservationbe.repository.userRole.UserRole;
+import com.github.moviereservationbe.service.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,7 +24,7 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String myId) throws UsernameNotFoundException {
         User user = userJpa.findByMyIdFetchJoin(myId)
-                .orElseThrow(()-> new NullPointerException("Cannot find user with ID"));
+                .orElseThrow(()-> new NotFoundException("Cannot find user with ID"));
 
         return CustomUserDetails.builder()
                 .userId(user.getUserId())

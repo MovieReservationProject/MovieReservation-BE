@@ -7,6 +7,8 @@ import com.github.moviereservationbe.repository.user.User;
 import com.github.moviereservationbe.repository.user.UserJpa;
 import com.github.moviereservationbe.repository.userRole.UserRole;
 import com.github.moviereservationbe.repository.userRole.UserRoleJpa;
+import com.github.moviereservationbe.service.exceptions.BadRequestException;
+import com.github.moviereservationbe.service.exceptions.NotFoundException;
 import com.github.moviereservationbe.web.DTO.auth.LoginRequestDto;
 import com.github.moviereservationbe.web.DTO.auth.SignUpRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -34,9 +36,8 @@ public class AuthService {
 
 
     public boolean signUp(SignUpRequestDto signUpRequestDto) {
-        if(userJpa.existsByMyId(signUpRequestDto.getMyId())){
-            return false;
-        }
+        if(userJpa.existsByMyId(signUpRequestDto.getMyId()))
+            throw new BadRequestException("There is already user with ID: "+ signUpRequestDto.getMyId());
 
         Role role= roleJpa.findByName("ROLE_USER");
 
@@ -64,7 +65,7 @@ public class AuthService {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User user= userJpa.findByMyIdFetchJoin(loginRequestDto.getMyId())
-                    .orElseThrow(()-> new NullPointerException("Cannot find user with ID"));
+                    .orElseThrow(()-> new NotFoundException("Cannot find user with ID"));
             List<String> role= user.getUserRoleList().stream().map(UserRole::getRole).map(Role::getName).collect(Collectors.toList());
             return jwtTokenProvider.createToken(loginRequestDto.getMyId(), role);
         }catch(Exception e){
