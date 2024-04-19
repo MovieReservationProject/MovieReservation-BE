@@ -18,4 +18,6 @@ public interface UserJpa extends JpaRepository<User, Integer> {
                     "WHERE u.myId = ?1 "
     )
     Optional<User> findBymyIdFetchJoin(String myId);
+
+    boolean existsByMyId(String myId);
 }

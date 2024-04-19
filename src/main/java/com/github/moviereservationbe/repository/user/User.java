@@ -3,6 +3,7 @@ import com.github.moviereservationbe.repository.userRole.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -30,7 +31,7 @@ public class User {
     private String password;
 
     @Column(name = "birthday", nullable = false)
-    private String birthday;
+    private Date birthday;
 
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
