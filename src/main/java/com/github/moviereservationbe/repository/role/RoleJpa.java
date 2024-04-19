@@ -6,4 +6,3 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RoleJpa extends JpaRepository<Role, Integer> {
 }
-햣
