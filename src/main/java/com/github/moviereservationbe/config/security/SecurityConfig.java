@@ -1,5 +1,7 @@
 package com.github.moviereservationbe.config.security;
 
+import com.github.moviereservationbe.service.exceptions.CustomAccessDeniedHandler;
+import com.github.moviereservationbe.service.exceptions.CustomAuthenticationEntryPoint;
 import com.github.moviereservationbe.web.filters.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -26,11 +28,15 @@ public class SecurityConfig {
                 .formLogin(f->f.disable())
                 .rememberMe(r->r.disable())
                 .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(a->
+                .authorizeRequests(a->
                         a
                                 .requestMatchers("/resources/static/**", "/auth/sign-up", "/auth/login").permitAll()
                                 .requestMatchers("/test").hasRole("USER")
                 )
+                .exceptionHandling(e->{
+                    e.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+                    e.accessDeniedHandler(new CustomAccessDeniedHandler());
+                })
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
