@@ -19,7 +19,6 @@ public class UserRole {
     @Column(name = "user_role_id")
     private Integer userRoleId;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
