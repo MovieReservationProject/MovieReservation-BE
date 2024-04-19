@@ -7,7 +7,7 @@ spring:
       matching-strategy: ant_path_matcher
 
   autoconfigure:
-    exclude:org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 
   datasource:
     username: ${DATABASE_USERNAME}
