@@ -33,9 +33,9 @@ public class JwtTokenProvider {
         return request.getHeader("Token");
     }
 
-    public String createToken(String email, List<String> roles){
-        Claims claims= Jwts.claims().setSubject(email);
-        claims.put("roles", roles);
+    public String createToken(String myId, List<String> role){
+        Claims claims= Jwts.claims().setSubject(myId);
+        claims.put("role", role);
         Date now= new Date();
         return Jwts.builder()
                 .setClaims(claims)
@@ -55,11 +55,11 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String jwtToken){
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getUserEmail(jwtToken));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(getUserMyId(jwtToken));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getUserEmail(String jwtToken) {
+    public String getUserMyId(String jwtToken) {
         return Jwts.parser().setSigningKey(key).parseClaimsJws(jwtToken).getBody().getSubject();
     }
 

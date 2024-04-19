@@ -1,6 +1,10 @@
 package com.github.moviereservationbe.repository.user;
+import com.github.moviereservationbe.repository.userRole.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,9 +31,12 @@ public class User {
     private String password;
 
     @Column(name = "birthday", nullable = false)
-    private String birthday;
+    private Date birthday;
 
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true) //cascade, orphanRemoval 추가해보았음
+    private List<UserRole> userRoleList;
 
 }
