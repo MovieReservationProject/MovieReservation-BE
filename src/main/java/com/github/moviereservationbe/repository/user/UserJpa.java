@@ -17,7 +17,7 @@ public interface UserJpa extends JpaRepository<User, Integer> {
                     "JOIN FETCH ur.role r " +
                     "WHERE u.myId = ?1 "
     )
-    Optional<User> findBymyIdFetchJoin(String myId);
+    Optional<User> findByMyIdFetchJoin(String myId);
 
     boolean existsByMyId(String myId);
 }

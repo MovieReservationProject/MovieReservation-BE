@@ -8,6 +8,7 @@ import com.github.moviereservationbe.repository.userRole.UserRole;
 import com.github.moviereservationbe.repository.userRole.UserRoleJpa;
 import com.github.moviereservationbe.web.DTO.auth.SignUpRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

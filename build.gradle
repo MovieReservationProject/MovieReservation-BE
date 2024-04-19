@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.4'
+    id 'org.springframework.boot' version '3.2.2'
     id 'io.spring.dependency-management' version '1.1.4'
 }
 
@@ -48,6 +48,9 @@ dependencies {
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.1.4'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:2.7.2'
     runtimeOnly 'mysql:mysql-connector-java:8.0.26'
+
+    // Add the spring-boot-configuration-processor dependency for annotation processing
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
 }
 
