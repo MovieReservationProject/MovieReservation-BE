@@ -1,8 +1,12 @@
 package com.github.moviereservationbe.web.controller;
 
 import com.github.moviereservationbe.service.service.AuthService;
+import com.github.moviereservationbe.web.DTO.ResponseDto;
+import com.github.moviereservationbe.web.DTO.auth.LoginRequestDto;
 import com.github.moviereservationbe.web.DTO.auth.SignUpRequestDto;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +19,16 @@ public class SignController {
     private final AuthService authService;
 
     @PostMapping("/sign-up")
-    public String register(@RequestBody SignUpRequestDto signUpRequestDto){
+    public ResponseDto register(@RequestBody SignUpRequestDto signUpRequestDto){
         boolean isSuccess= authService.signUp(signUpRequestDto);
-        return isSuccess ? "회원가입 성공" : "회원가입 실패";
+        String message= isSuccess ? "SignUp success" : "SignUp fail";
+        return new ResponseDto(HttpStatus.OK.value(), message);
+    }
+
+    @PostMapping("/login")
+    public ResponseDto login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse httpServletResponse){
+        String token= authService.login(loginRequestDto);
+        httpServletResponse.setHeader("Token", token);
+        return new ResponseDto(HttpStatus.OK.value(), "Login Success");
     }
 }

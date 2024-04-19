@@ -1,16 +1,25 @@
 package com.github.moviereservationbe.service.service;
 
+import com.github.moviereservationbe.config.security.JwtTokenProvider;
 import com.github.moviereservationbe.repository.role.Role;
 import com.github.moviereservationbe.repository.role.RoleJpa;
 import com.github.moviereservationbe.repository.user.User;
 import com.github.moviereservationbe.repository.user.UserJpa;
 import com.github.moviereservationbe.repository.userRole.UserRole;
 import com.github.moviereservationbe.repository.userRole.UserRoleJpa;
+import com.github.moviereservationbe.web.DTO.auth.LoginRequestDto;
 import com.github.moviereservationbe.web.DTO.auth.SignUpRequestDto;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.NotAcceptableStatusException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +29,8 @@ public class AuthService {
     private final UserJpa userJpa;
 
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     public boolean signUp(SignUpRequestDto signUpRequestDto) {
@@ -44,5 +55,21 @@ public class AuthService {
                         .build()
         );
         return true;
+    }
+
+    public String login(LoginRequestDto loginRequestDto) {
+        try{
+            Authentication authentication= authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequestDto.getMyId(), loginRequestDto.getPassword())
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            User user= userJpa.findByMyIdFetchJoin(loginRequestDto.getMyId())
+                    .orElseThrow(()-> new NullPointerException("Cannot find user with ID"));
+            List<String> role= user.getUserRoleList().stream().map(UserRole::getRole).map(Role::getName).collect(Collectors.toList());
+            return jwtTokenProvider.createToken(loginRequestDto.getMyId(), role);
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new NotAcceptableStatusException("Login not possible");
+        }
     }
 }

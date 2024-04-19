@@ -23,7 +23,7 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String myId) throws UsernameNotFoundException {
         User user = userJpa.findByMyIdFetchJoin(myId)
-                .orElseThrow(()-> new NullPointerException("id에 해당하는 user를 찾을 수 없습니다."));
+                .orElseThrow(()-> new NullPointerException("Cannot find user with ID"));
 
         return CustomUserDetails.builder()
                 .userId(user.getUserId())
