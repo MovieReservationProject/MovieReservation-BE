@@ -1,4 +1,4 @@
-package com.github.moviereservationbe.repository.actor;
+package com.github.moviereservationbe.repository.MainPage.actor;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

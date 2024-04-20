@@ -1,4 +1,4 @@
-package com.github.moviereservationbe.repository.user;
+package com.github.moviereservationbe.repository.Auth.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

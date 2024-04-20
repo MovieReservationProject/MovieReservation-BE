@@ -1,5 +1,5 @@
-package com.github.moviereservationbe.repository.user;
-import com.github.moviereservationbe.repository.userRole.UserRole;
+package com.github.moviereservationbe.repository.Auth.user;
+import com.github.moviereservationbe.repository.Auth.userRole.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 

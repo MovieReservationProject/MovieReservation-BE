@@ -1,8 +1,8 @@
 package com.github.moviereservationbe.web.controller;
 
-import com.github.moviereservationbe.repository.user.User;
-import com.github.moviereservationbe.repository.user.UserJpa;
-import com.github.moviereservationbe.repository.userDetails.CustomUserDetails;
+import com.github.moviereservationbe.repository.Auth.user.User;
+import com.github.moviereservationbe.repository.Auth.user.UserJpa;
+import com.github.moviereservationbe.repository.Auth.userDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;

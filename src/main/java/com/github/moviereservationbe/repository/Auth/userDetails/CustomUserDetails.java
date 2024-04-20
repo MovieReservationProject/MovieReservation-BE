@@ -1,4 +1,4 @@
-package com.github.moviereservationbe.repository.userDetails;
+package com.github.moviereservationbe.repository.Auth.userDetails;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

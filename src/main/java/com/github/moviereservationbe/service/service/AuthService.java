@@ -1,12 +1,12 @@
 package com.github.moviereservationbe.service.service;
 
 import com.github.moviereservationbe.config.security.JwtTokenProvider;
-import com.github.moviereservationbe.repository.role.Role;
-import com.github.moviereservationbe.repository.role.RoleJpa;
-import com.github.moviereservationbe.repository.user.User;
-import com.github.moviereservationbe.repository.user.UserJpa;
-import com.github.moviereservationbe.repository.userRole.UserRole;
-import com.github.moviereservationbe.repository.userRole.UserRoleJpa;
+import com.github.moviereservationbe.repository.Auth.role.Role;
+import com.github.moviereservationbe.repository.Auth.role.RoleJpa;
+import com.github.moviereservationbe.repository.Auth.user.User;
+import com.github.moviereservationbe.repository.Auth.user.UserJpa;
+import com.github.moviereservationbe.repository.Auth.userRole.UserRole;
+import com.github.moviereservationbe.repository.Auth.userRole.UserRoleJpa;
 import com.github.moviereservationbe.service.exceptions.BadRequestException;
 import com.github.moviereservationbe.service.exceptions.NotFoundException;
 import com.github.moviereservationbe.web.DTO.auth.LoginRequestDto;

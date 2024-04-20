@@ -1,4 +1,4 @@
-package com.github.moviereservationbe.repository.role;
+package com.github.moviereservationbe.repository.Auth.role;
 
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;

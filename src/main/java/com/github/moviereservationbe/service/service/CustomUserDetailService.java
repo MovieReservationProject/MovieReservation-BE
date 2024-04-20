@@ -1,10 +1,10 @@
 package com.github.moviereservationbe.service.service;
 
-import com.github.moviereservationbe.repository.role.Role;
-import com.github.moviereservationbe.repository.user.User;
-import com.github.moviereservationbe.repository.user.UserJpa;
-import com.github.moviereservationbe.repository.userDetails.CustomUserDetails;
-import com.github.moviereservationbe.repository.userRole.UserRole;
+import com.github.moviereservationbe.repository.Auth.role.Role;
+import com.github.moviereservationbe.repository.Auth.user.User;
+import com.github.moviereservationbe.repository.Auth.user.UserJpa;
+import com.github.moviereservationbe.repository.Auth.userDetails.CustomUserDetails;
+import com.github.moviereservationbe.repository.Auth.userRole.UserRole;
 import com.github.moviereservationbe.service.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;

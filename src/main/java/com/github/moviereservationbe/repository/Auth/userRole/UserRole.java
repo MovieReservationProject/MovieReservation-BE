@@ -1,8 +1,7 @@
-package com.github.moviereservationbe.repository.userRole;
+package com.github.moviereservationbe.repository.Auth.userRole;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.github.moviereservationbe.repository.role.Role;
-import com.github.moviereservationbe.repository.user.User;
+import com.github.moviereservationbe.repository.Auth.role.Role;
+import com.github.moviereservationbe.repository.Auth.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
