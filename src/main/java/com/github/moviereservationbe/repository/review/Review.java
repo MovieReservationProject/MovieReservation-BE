@@ -1,6 +1,7 @@
 package com.github.moviereservationbe.repository.review;
 
 import com.github.moviereservationbe.repository.Auth.user.User;
+import com.github.moviereservationbe.repository.MainPage.movie.Movie;
 import jakarta.persistence.*;
 import lombok.*;
 

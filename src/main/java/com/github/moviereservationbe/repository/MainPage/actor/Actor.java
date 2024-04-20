@@ -33,4 +33,6 @@ public class Actor {
 
     @Column(name= "height" , nullable = false)
     private Integer height;
+
+
 }

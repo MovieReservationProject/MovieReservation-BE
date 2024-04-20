@@ -1,6 +1,7 @@
 package com.github.moviereservationbe.repository.ReservationPage.reservation;
 
 import com.github.moviereservationbe.repository.Auth.user.User;
+import com.github.moviereservationbe.repository.ReservationPage.schedule.Schedule;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,13 +26,13 @@ public class Reservation {
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
 
-    @Column(name = "reserve_num",length = 25,nullable = false)
+    @Column(name = "reserve_num", nullable = false)
     private String reserveNum;
 
     @Column(name="reserve_time",nullable = false)
     private LocalDateTime reserveTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "movie_cinema_id",nullable = false)
-    private MovieCinema movieCinema;
+    @JoinColumn(name = "schedule_id",nullable = false)
+    private Schedule schedule;
 }

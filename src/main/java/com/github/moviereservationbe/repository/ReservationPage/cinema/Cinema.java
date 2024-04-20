@@ -18,12 +18,12 @@ public class Cinema {
     @Column(name = "cinema_id")
     private Integer cinemaId;
 
-    @Column(name = "cinema_name",length = 50,nullable = false)
+    @Column(name = "cinema_name", nullable = false)
     private String cinemaName;
 
-    @Column(name = "address",length = 50,nullable = false)
+    @Column(name = "address", nullable = false)
     private String address;
 
-    @Column(name = "phone_number",length = 50,nullable = false)
+    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 }
