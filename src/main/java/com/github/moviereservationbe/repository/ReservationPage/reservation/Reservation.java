@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @Table(name = "reservation")
 public class Reservation {
     //git push test
+    //git push test2
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reserve_id")
