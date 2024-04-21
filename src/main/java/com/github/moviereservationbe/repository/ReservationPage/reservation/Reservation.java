@@ -34,7 +34,7 @@ public class Reservation {
     @Column(name="reserve_time",nullable = false)
     private LocalDateTime reserveTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "schedule_id",nullable = false)
     private Schedule schedule;
 }

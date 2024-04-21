@@ -19,10 +19,7 @@ public class ReservationController {
     public ResponseDto ticketReservation(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ReservationRequest reservationRequest){
         return reservationService.ticketReservationResult(customUserDetails,reservationRequest);
     }
-    @GetMapping("/test")
-    public ResponseDto findMovie(@RequestBody ReservationRequest reservationRequest){
-        return reservationService.findMovieByTitle(reservationRequest);
-    }
+
 
 
 }
