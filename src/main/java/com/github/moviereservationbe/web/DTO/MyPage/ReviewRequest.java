@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewRequest {
+    private Integer movieId;
     private Integer score;
     private String content;
 }

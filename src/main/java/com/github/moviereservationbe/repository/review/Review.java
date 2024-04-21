@@ -37,4 +37,5 @@ public class Review {
 
         @Column(name = "review_date", nullable = false)
         private Date reviewDate;
+
 }
