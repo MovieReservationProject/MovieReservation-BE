@@ -41,4 +41,11 @@ public class ExceptionControllerAdvice {
         return soe.getMessage();
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ExpiredException.class)
+    public String handleExpiredException(ExpiredException ee){
+        log.error("Expired Exception: "+ ee.getMessage());
+        return ee.getMessage();
+    }
+
 }

@@ -3,29 +3,29 @@ package com.github.moviereservationbe.web.DTO.reservation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationRequestDto {
+public class ReservationResponseDto {
+    @JsonProperty("reserve-num")
+    private String reserveNum;
     @JsonProperty("movie-name")
     private String movieName;
     @JsonProperty("cinema-name")
     private String cinemaName;
-    @JsonProperty("cinema-type")
-    private String cinemaType;
-    @JsonProperty("movie-date")
-    private LocalDate movieDate;
-    @JsonProperty("movie-time")
-    private LocalTime movieTime;
+    @JsonProperty("reserve-date")
+    private LocalDate reserveDate;
+    @JsonProperty("reserve-time")
+    private LocalTime reserveTime;
+    @JsonProperty("reservation-at")
+    private LocalDateTime reservationAt;
 }
