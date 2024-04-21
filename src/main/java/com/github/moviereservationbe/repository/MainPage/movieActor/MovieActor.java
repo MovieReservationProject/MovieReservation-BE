@@ -20,10 +20,10 @@ public class MovieActor {
     private Integer movieActorId;
 
     @ManyToOne
-    @Column(name= "movie_id")
+    @JoinColumn(name= "movie_id")
     private Movie movie;
 
     @ManyToOne
-    @Column(name= "actor_id")
+    @JoinColumn(name= "actor_id")
     private Actor actor;
 }

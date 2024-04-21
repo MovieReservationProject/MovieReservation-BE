@@ -1,16 +1,15 @@
 package com.github.moviereservationbe.web.DTO.MyPage;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class MyPageReservationResponse {
     private String reserveNum;
     private String titleKorean;

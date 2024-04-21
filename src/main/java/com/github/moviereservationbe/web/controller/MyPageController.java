@@ -31,15 +31,15 @@ public class MyPageController {
     public MyPageUserDetailResponse MyPageUserDetailUpdate(@AuthenticationPrincipal CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest)
     {return myPageService.updateUserDetail(customUserDetails,myPageUserDetailRequest);}
 
-    @PostMapping("review/add")
-    public ReviewResponse AddReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, ReviewRequest reviewRequest)
-    {
-        try {
-            return myPageService.AddReview(customUserDetails,reviewRequest);
-        } catch (ReviewAlreadyExistsException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-    }
+//    @PostMapping("review/add")
+//    public ReviewResponse AddReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, ReviewRequest reviewRequest)
+//    {
+//        try {
+//            return myPageService.AddReview(customUserDetails,reviewRequest);
+//        } catch (ReviewAlreadyExistsException e) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+//        }
+//    }
 
     @GetMapping("review/list")
     public List<ReviewResponse> ReviewList(@AuthenticationPrincipal CustomUserDetails customUserDetails,Pageable pageable)

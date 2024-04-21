@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReservationJpa extends JpaRepository<Reservation, Integer> {
-    Page<MyPageReservationResponse> findAllReservation(Pageable pageable);
+//    Page<MyPageReservationResponse> findAllReservation(Pageable pageable);
 }
