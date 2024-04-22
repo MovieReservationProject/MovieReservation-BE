@@ -4,12 +4,10 @@ import com.github.moviereservationbe.repository.Auth.userDetails.CustomUserDetai
 import com.github.moviereservationbe.service.service.ReservationService;
 import com.github.moviereservationbe.web.DTO.ResponseDto;
 import com.github.moviereservationbe.web.DTO.reservation.ReservationRequestDto;
+import com.github.moviereservationbe.web.DTO.reservation.ReservationUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,4 +21,9 @@ public class ReservationController {
         return reservationService.register(customUserDetails, reservationRequestDto);
     }
 
+    @PutMapping("/update")
+    public ResponseDto update(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                              @RequestBody ReservationUpdateDto reservationUpdateDto){
+        return reservationService.update(customUserDetails, reservationUpdateDto);
+    }
 }

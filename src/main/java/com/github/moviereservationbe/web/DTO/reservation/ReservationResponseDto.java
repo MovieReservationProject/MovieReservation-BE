@@ -1,5 +1,6 @@
 package com.github.moviereservationbe.web.DTO.reservation;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -27,5 +28,6 @@ public class ReservationResponseDto {
     @JsonProperty("reserve-time")
     private LocalTime reserveTime;
     @JsonProperty("reservation-at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime reservationAt;
 }

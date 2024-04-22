@@ -8,24 +8,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationRequestDto {
-    @JsonProperty("movie-name")
-    private String movieName;
-    @JsonProperty("cinema-name")
-    private String cinemaName;
-    @JsonProperty("cinema-type")
-    private String cinemaType;
-    @JsonProperty("reserve-date")
-    private LocalDate reserveDate;
+public class ReservationUpdateDto {
+    @JsonProperty("reserve-num")
+    private String reserveNum;
     @JsonProperty("reserve-time")
     private LocalTime reserveTime;
 }

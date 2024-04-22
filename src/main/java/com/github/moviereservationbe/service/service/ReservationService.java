@@ -20,8 +20,10 @@ import com.github.moviereservationbe.service.exceptions.SoldOutException;
 import com.github.moviereservationbe.web.DTO.ResponseDto;
 import com.github.moviereservationbe.web.DTO.reservation.ReservationRequestDto;
 import com.github.moviereservationbe.web.DTO.reservation.ReservationResponseDto;
+import com.github.moviereservationbe.web.DTO.reservation.ReservationUpdateDto;
 import lombok.RequiredArgsConstructor;
 
+import org.aspectj.weaver.ast.Not;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -43,8 +45,8 @@ public class ReservationService {
         String movieName= reservationRequestDto.getMovieName();
         String cinemaName= reservationRequestDto.getCinemaName();
         String cinemaType= reservationRequestDto.getCinemaType();
-        LocalDate movieDate= reservationRequestDto.getMovieDate();
-        LocalTime movieTime= reservationRequestDto.getMovieTime();
+        LocalDate movieDate= reservationRequestDto.getReserveDate();
+        LocalTime movieTime= reservationRequestDto.getReserveTime();
 
         //1. find user, movie
         User user= userJpa.findByMyIdFetchJoin(customUserDetails.getMyId())
@@ -121,4 +123,45 @@ public class ReservationService {
         }
     }
 
+    public ResponseDto update(CustomUserDetails customUserDetails, ReservationUpdateDto reservationUpdateDto) {
+        User user= userJpa.findByMyIdFetchJoin(customUserDetails.getMyId())
+                .orElseThrow(()-> new NotFoundException("Cannot find user with ID: "+ customUserDetails.getMyId()));
+        Reservation reservation= reservationJpa.findByReserveNum(reservationUpdateDto.getReserveNum())
+                .orElseThrow(()-> new NotFoundException("Cannot find reservation with reserve num: "+ reservationUpdateDto.getReserveNum()));
+        //find schedule in reservation
+        Schedule beforeSchedule= reservation.getSchedule();
+        Movie movie= beforeSchedule.getMovie();
+        CinemaType cinemaType= beforeSchedule.getCinemaType();
+        LocalDate movieDate= beforeSchedule.getStartTime().toLocalDate();
+        LocalDateTime movieDateTime= movieDate.atTime(reservationUpdateDto.getReserveTime());
+        try {
+            //change schedule: remaining seats previous schedule +1
+            beforeSchedule.setRemainingSeats(beforeSchedule.getRemainingSeats() + 1);
+            scheduleJpa.save(beforeSchedule);
+
+            //find new schedule with reservationUpdateDto.getReserveTime()
+            Schedule newSchedule = scheduleJpa.findByMovieCinemaTypeStartTime(movie, cinemaType, movieDateTime)
+                    .orElseThrow(() -> new NotFoundException("Cannot find schedule matching movie, cinema type and start time"));
+            //change my reservation - schedule
+            reservation.setSchedule(newSchedule);
+            reservationJpa.save(reservation);
+            //change schedule: remaining seats newSchedule -1
+            newSchedule.setRemainingSeats(newSchedule.getRemainingSeats() - 1);
+            scheduleJpa.save(newSchedule);
+
+            ReservationResponseDto reservationResponseDto = ReservationResponseDto
+                    .builder()
+                    .reserveNum(reservation.getReserveNum())
+                    .movieName(movie.getTitleKorean())
+                    .cinemaName(cinemaType.getCinema().getCinemaName())
+                    .reserveDate(newSchedule.getStartTime().toLocalDate())
+                    .reserveTime(newSchedule.getStartTime().toLocalTime())
+                    .reservationAt(LocalDateTime.now())
+                    .build();
+
+            return new ResponseDto(HttpStatus.OK.value(), "Reservation update successful", reservationResponseDto);
+        }catch(Exception e){
+            return new ResponseDto(HttpStatus.BAD_REQUEST.value(), "Reservation update fail");
+        }
+    }
 }
