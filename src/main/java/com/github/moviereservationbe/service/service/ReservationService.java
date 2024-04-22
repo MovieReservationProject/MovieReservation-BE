@@ -13,10 +13,7 @@ import com.github.moviereservationbe.repository.ReservationPage.reservation.Rese
 import com.github.moviereservationbe.repository.ReservationPage.reservation.ReservationJpa;
 import com.github.moviereservationbe.repository.ReservationPage.schedule.Schedule;
 import com.github.moviereservationbe.repository.ReservationPage.schedule.ScheduleJpa;
-import com.github.moviereservationbe.service.exceptions.BadRequestException;
-import com.github.moviereservationbe.service.exceptions.ExpiredException;
-import com.github.moviereservationbe.service.exceptions.NotFoundException;
-import com.github.moviereservationbe.service.exceptions.SoldOutException;
+import com.github.moviereservationbe.service.exceptions.*;
 import com.github.moviereservationbe.web.DTO.ResponseDto;
 import com.github.moviereservationbe.web.DTO.reservation.ReservationRequestDto;
 import com.github.moviereservationbe.web.DTO.reservation.ReservationResponseDto;
@@ -30,6 +27,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Random;
 
 @Service
@@ -53,8 +53,15 @@ public class ReservationService {
                 .orElseThrow(()-> new NotFoundException("Cannot find user with ID: "+ customUserDetails.getMyId()));
         Movie movie= movieJpa.findByTitleKorean(movieName)
                 .orElseThrow(()-> new NotFoundException("Cannot find movie with name: "+ movieName));
-        //2. if movie status "상영종료" throw ExpiredException
+        //2-1. if movie status "상영종료" throw ExpiredException
         if(movie.getStatus().equals("상영종료")) throw new ExpiredException("This movie is expired.");
+
+        //2-2. if user is too young, reservation fail
+        Date birthday= user.getBirthday();
+        LocalDate localBirthday = birthday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        int currentYear= LocalDate.now().getYear();
+        int userAge= currentYear- localBirthday.getYear();
+        if(movie.getAgeLimit() > userAge) throw new AgeRestrictionException("You are too young to watch this movie");
 
         //3. find cinema with cinemaName
         Cinema cinema = cinemaJpa.findByCinemaName(cinemaName)

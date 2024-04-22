@@ -48,4 +48,11 @@ public class ExceptionControllerAdvice {
         return ee.getMessage();
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AgeRestrictionException.class)
+    public String handleAgeRestrictionException(AgeRestrictionException are){
+        log.error("Age Restriction Exception: "+ are.getMessage());
+        return are.getMessage();
+    }
+
 }
