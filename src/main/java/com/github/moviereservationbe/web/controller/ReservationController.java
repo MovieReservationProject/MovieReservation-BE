@@ -22,4 +22,5 @@ public class ReservationController {
                                 @RequestBody ReservationRequestDto reservationRequestDto){
         return reservationService.register(customUserDetails, reservationRequestDto);
     }
+
 }

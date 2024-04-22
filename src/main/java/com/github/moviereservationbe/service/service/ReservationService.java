@@ -49,13 +49,13 @@ public class ReservationService {
         //1. find user, movie
         User user= userJpa.findByMyIdFetchJoin(customUserDetails.getMyId())
                 .orElseThrow(()-> new NotFoundException("Cannot find user with ID: "+ customUserDetails.getMyId()));
-        Movie movie= movieJpa.findByName(movieName)
+        Movie movie= movieJpa.findByTitleKorean(movieName)
                 .orElseThrow(()-> new NotFoundException("Cannot find movie with name: "+ movieName));
         //2. if movie status "상영종료" throw ExpiredException
         if(movie.getStatus().equals("상영종료")) throw new ExpiredException("This movie is expired.");
 
         //3. find cinema with cinemaName
-        Cinema cinema = cinemaJpa.findByName(cinemaName)
+        Cinema cinema = cinemaJpa.findByCinemaName(cinemaName)
                 .orElseThrow(()-> new NotFoundException("Cannot find cinema with name: "+ cinemaName));
         //4. find cinemaType with cinemaType and cinema
         CinemaType cinemaAndCinemaType= cinemaTypeJpa.findByCinemaAndCinemaType(cinema, cinemaType)
@@ -64,9 +64,19 @@ public class ReservationService {
         //5. if movieDate, movieTime이 reservation보다 먼저이면 throw Exception
         LocalDateTime movieDateTime= movieDate.atTime(movieTime);
         if(movieDateTime.isBefore(LocalDateTime.now())) throw new BadRequestException("Choose movie later than now");
-        //6. find schedule with cinemaType, movieName, movieDate, movieTime
+
+
+//        //6. (방법1) find schedule with cinemaType, movieName, movieDate, movieTime entity 통째로 찾기
         Schedule schedule= scheduleJpa.findByMovieCinemaTypeStartTime(movie, cinemaAndCinemaType, movieDateTime)
                 .orElseThrow(()-> new NotFoundException("Cannot find schedule matching movie, cinema type and start time"));
+
+//        //6. (방법2) find schedule with cinemaTypeId, movieID, movieDateTime 아이디로 찾기
+//        Integer movieId= movie.getMovieId();
+//        Integer cinemaAndCinemaTypeId= cinemaAndCinemaType.getCinemaTypeId();
+//        Schedule schedule= scheduleJpa.findScheduleByMovieIdCinemaTypeIdMovieDateTime(movieId, cinemaAndCinemaTypeId, movieDateTime)
+//                .orElseThrow(()-> new NotFoundException("Cannot find schedule matching movieId, cinema type Id and start time"));
+
+
         //7. if remainingSeats < 1 throw SoldOutException
         if(schedule.getRemainingSeats()<1) throw new SoldOutException("No more seats available in this movie. Choose another time or cinema.");
         //8. make reserveNum
@@ -110,4 +120,5 @@ public class ReservationService {
             return new ResponseDto(HttpStatus.BAD_REQUEST.value(), "Reservation fail");
         }
     }
+
 }
