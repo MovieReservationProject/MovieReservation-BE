@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -37,4 +38,11 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "schedule_id",nullable = false)
     private Schedule schedule;
+
+    public Reservation(User user,String reserveNumber,LocalDateTime now,Schedule schedule) {
+        this.user = user;
+        this.reserveNum=reserveNumber;
+        this.reserveTime=now;
+        this.schedule=schedule;
+    }
 }

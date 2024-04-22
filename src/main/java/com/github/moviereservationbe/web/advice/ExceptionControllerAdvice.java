@@ -46,5 +46,11 @@ public class ExceptionControllerAdvice {
         log.error("Expired Exception : "+ ee.getMessage());
         return ee.getMessage();
     }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AgeRestrictionException.class)
+    public String handlerAgeRestrictionException(AgeRestrictionException are){
+        log.error("Expired Exception : "+ are.getMessage());
+        return are.getMessage();
+    }
 
 }
