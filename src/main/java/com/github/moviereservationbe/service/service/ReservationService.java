@@ -30,6 +30,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -137,19 +138,29 @@ public class ReservationService {
                 .orElseThrow(()-> new NotFoundException("Cannot find reservation with reserve num: "+ reservationUpdateDto.getReserveNum()));
         //find schedule in reservation
         Schedule beforeSchedule= reservation.getSchedule();
+        //⭐️if movie start time in schedule is before now, reservation cannot be changed
+        if(beforeSchedule.getStartTime().isBefore(LocalDateTime.now())) throw new ExpiredException("This reservation is expired.");
         Movie movie= beforeSchedule.getMovie();
         CinemaType cinemaType= beforeSchedule.getCinemaType();
         LocalDate movieDate= beforeSchedule.getStartTime().toLocalDate();
         LocalDateTime movieDateTime= movieDate.atTime(reservationUpdateDto.getReserveTime());
+        //⭐if there is no more movie on the same date, reservation cannot be changed
+        //⭐if reservationUpdateDto.getReserveTime() is before now, reservation cannot be changed
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        if(movieDateTime.isBefore(LocalDateTime.now())) throw new ExpiredException("Reservation update has to be after "+ LocalDateTime.now().format(formatter));
+        //⭐if reservationUpdateDto.getReserveTime() is same, no reservation to change
+        if(movieDateTime.equals(beforeSchedule.getStartTime())) throw new BadRequestException("This reservation is the same reservation");
+
         try {
             //change schedule: remaining seats previous schedule +1
             beforeSchedule.setRemainingSeats(beforeSchedule.getRemainingSeats() + 1);
             scheduleJpa.save(beforeSchedule);
 
             //find new schedule with reservationUpdateDto.getReserveTime()
+            //if reservationUpdateDto.getReserveTime() does not exist, reservation cannot be changed
             Schedule newSchedule = scheduleJpa.findByMovieCinemaTypeStartTime(movie, cinemaType, movieDateTime)
                     .orElseThrow(() -> new NotFoundException("Cannot find schedule matching movie, cinema type and start time"));
-            //change my reservation - schedule
+            //change my reservation -> schedule
             reservation.setSchedule(newSchedule);
             reservationJpa.save(reservation);
             //change schedule: remaining seats newSchedule -1
