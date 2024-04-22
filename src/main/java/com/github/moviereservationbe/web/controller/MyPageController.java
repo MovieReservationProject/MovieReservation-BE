@@ -31,15 +31,15 @@ public class MyPageController {
     public MyPageUserDetailResponse MyPageUserDetailUpdate(@AuthenticationPrincipal CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest)
     {return myPageService.updateUserDetail(customUserDetails,myPageUserDetailRequest);}
 
-//    @PostMapping("review/add")
-//    public ReviewResponse AddReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, ReviewRequest reviewRequest)
-//    {
-//        try {
-//            return myPageService.AddReview(customUserDetails,reviewRequest);
-//        } catch (ReviewAlreadyExistsException e) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-//        }
-//    }
+    @PostMapping("review/add")
+    public ReviewResponse AddReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, ReviewRequest reviewRequest)
+    {
+        try {
+            return myPageService.AddReview(customUserDetails,reviewRequest);
+        } catch (ReviewAlreadyExistsException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
 
     @GetMapping("review/list")
     public List<ReviewResponse> ReviewList(@AuthenticationPrincipal CustomUserDetails customUserDetails,Pageable pageable)
@@ -49,7 +49,7 @@ public class MyPageController {
     public ReviewResponse UpdateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,ReviewRequest reviewRequest)
     {return myPageService.updateReview(customUserDetails,reviewRequest);}
 
-    @DeleteMapping("review/delete")
-    public ResponseDto DeleteReview(@AuthenticationPrincipal CustomUserDetails customUserDetails)
-    {return myPageService.deleteReview(customUserDetails);}
+    @DeleteMapping("review/delete/{reviewId}")
+    public ResponseDto DeleteReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Integer reviewId)
+    {return myPageService.deleteReview(customUserDetails, reviewId);}
 }

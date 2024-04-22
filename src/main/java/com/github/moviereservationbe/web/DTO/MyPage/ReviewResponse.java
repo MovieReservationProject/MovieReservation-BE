@@ -16,4 +16,5 @@ public class ReviewResponse {
     private LocalDateTime reserveTime;
     private Integer score;
     private String content;
+    private LocalDateTime reviewDate;
 }

@@ -22,4 +22,8 @@ public class ResponseDto {
         this.message = message;
         this.data = data;
     }
+
+    public ResponseDto(String message) {
+        this.message = message;
+    }
 }
