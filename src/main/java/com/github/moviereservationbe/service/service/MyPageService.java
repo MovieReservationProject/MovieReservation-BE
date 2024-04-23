@@ -75,7 +75,7 @@ public class MyPageService {
         return new ResponseDto(HttpStatus.OK.value(),"",myPageUserDetailResponse);
     }
 
-
+    //리뷰 조회
     public ResponseDto findAllReviews(CustomUserDetails customUserDetails, Pageable pageable) {
         userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
         Page<Review> reviews = reviewJpa.findAll(pageable);
@@ -89,6 +89,7 @@ public class MyPageService {
         return new ResponseDto(HttpStatus.OK.value(),"",reviews);
     }
 
+    //리뷰 작성
     public ResponseDto AddReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest) throws ReviewAlreadyExistsException {
         Integer userId = customUserDetails.getUserId();
         Integer movieId = reviewRequest.getMovieId(); // 리뷰 대상 영화의 ID
@@ -96,8 +97,8 @@ public class MyPageService {
         String content = reviewRequest.getContent();
 
         if (score < 0 || score > 10) {
-            throw new IllegalArgumentException("평점은 0부터 10까지 가능합니다.");
-        }
+            throw new IllegalArgumentException("평점은 0부터 10까지 가능합니다.");  // 별점을 1부터 10까지 매길 수 있게 할 예정
+        }                                                                      // 해당 에러는 나지 않을 것 같지만, 의도치 않게 1~10이 아닌 값이 들어올 가능성도 있음
 
         Optional<Review> existingReview = reviewJpa.findByUserIdAndMovieId(userId, movieId);
         if (existingReview.isPresent()) {
@@ -123,7 +124,8 @@ public class MyPageService {
                 .build();
         return new ResponseDto(HttpStatus.OK.value(),"리뷰가 저장되었습니다.");
     }
-
+    
+    //리뷰 수정
     public ResponseDto updateReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest) {
         Integer userId = customUserDetails.getUserId();
         Integer movieId = reviewRequest.getMovieId();
@@ -155,6 +157,7 @@ public class MyPageService {
         return new ResponseDto(HttpStatus.OK.value(),"리뷰가 수정되었습니다.");
     }
 
+    //리뷰 삭제
     public ResponseDto deleteReview(CustomUserDetails customUserDetails, Integer reviewId) {
         Optional<Review> reviewOptional = reviewJpa.findById(reviewId);
         if (reviewOptional.isPresent()) {
