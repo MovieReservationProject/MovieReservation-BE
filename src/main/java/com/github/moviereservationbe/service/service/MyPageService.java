@@ -31,8 +31,9 @@ public class MyPageService {
     private final UserJpa userJpa;
 
     public ResponseDto findAllReservation(CustomUserDetails customUserDetails, Pageable pageable) {
-        userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("유저 정보를 조회할 수 없습니다"));
+        userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
         Page<Reservation> myPageReservation = reservationJpa.findAll(pageable);
+        if(myPageReservation==null){throw new NotFoundException("예약 정보를 찾을 수 없습니다.");}
         myPageReservation.stream()
                 .map((reservation) -> MyPageReservationResponse.builder()
                         .reserveNum(reservation.getReserveNum())
@@ -48,7 +49,7 @@ public class MyPageService {
 
     //유저정보 조회
     public ResponseDto UserDetail(CustomUserDetails customUserDetails) {
-        User user = userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("유저 정보를 조회할 수 없습니다"));
+        User user = userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
         MyPageUserDetailResponse myPageUserDetailResponse=MyPageUserDetailResponse.builder()
                 .name(user.getName())
                 .myId(user.getMyId())
@@ -61,8 +62,9 @@ public class MyPageService {
 
     //유저정보 변경
     public ResponseDto updateUserDetail(CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest) {
-        User user = userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("유저 정보를 조회할 수 없습니다"));
+        User user = userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
         user.setUser(myPageUserDetailRequest);
+        userJpa.save(user);
         MyPageUserDetailResponse myPageUserDetailResponse=MyPageUserDetailResponse.builder()
                 .name(user.getName())
                 .myId(user.getMyId())
@@ -75,7 +77,7 @@ public class MyPageService {
 
 
     public ResponseDto findAllReviews(CustomUserDetails customUserDetails, Pageable pageable) {
-        userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("유저 정보를 조회할 수 없습니다"));
+        userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
         Page<Review> reviews = reviewJpa.findAll(pageable);
         reviews.stream()
                 .map(review -> ReviewResponse.builder()
