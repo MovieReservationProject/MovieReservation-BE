@@ -47,7 +47,7 @@ public class ReservationController {
         return reservationService.findMovieDates(titleKorean, cinemaName);
     }
 
-    @GetMapping("/list/findDates/{titleKorean}/{cinemaName}/{movieDate}")
+    @GetMapping("/list/findTimes/{titleKorean}/{cinemaName}/{movieDate}")
     public List<ScheduleResponseDto> findMovieTimes(@PathVariable String titleKorean, @PathVariable String cinemaName, @PathVariable LocalDate movieDate){
         return reservationService.findMovieTimes(titleKorean, cinemaName, movieDate);
     }
