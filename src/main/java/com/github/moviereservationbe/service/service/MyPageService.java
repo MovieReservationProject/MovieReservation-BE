@@ -30,6 +30,7 @@ public class MyPageService {
     private final UserJpa userJpa;
 
     public List<MyPageReservationResponse> findAllReservation(CustomUserDetails customUserDetails, Pageable pageable) {
+        userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("유저 정보를 조회할 수 없습니다"));
         Page<Reservation> myPageReservation = reservationJpa.findAll(pageable);
         return myPageReservation.stream()
                 .map((reservation) -> MyPageReservationResponse.builder()
@@ -42,6 +43,18 @@ public class MyPageService {
                 .collect(Collectors.toList());
     }
 
+    public MyPageUserDetailResponse UserDetail(CustomUserDetails customUserDetails) {
+        User user = userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("유저 정보를 조회할 수 없습니다"));
+        return MyPageUserDetailResponse.builder()
+                .name(user.getName())
+                .myId(user.getMyId())
+                .birthday(user.getBirthday())
+                .phoneNumber(user.getPhoneNumber())
+                .password(user.getPassword())
+                .build();
+    }
+
+    //유저정보 변경
     public MyPageUserDetailResponse updateUserDetail(CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest) {
         User user = userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("유저 정보를 조회할 수 없습니다"));
         user.setUser(myPageUserDetailRequest);
@@ -54,7 +67,9 @@ public class MyPageService {
                 .build();
     }
 
+
     public List<ReviewResponse> findAllReviews(CustomUserDetails customUserDetails, Pageable pageable) {
+        userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("유저 정보를 조회할 수 없습니다"));
         Page<Review> reviews = reviewJpa.findAll(pageable);
         return reviews.stream()
                 .map(review -> ReviewResponse.builder()

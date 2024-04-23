@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value="mypage/")
+@RequestMapping(value="/mypage")
 public class MyPageController {
 
     private final MyPageService myPageService;
@@ -27,11 +27,15 @@ public class MyPageController {
     public List<MyPageReservationResponse> MyPageReservaionList(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable)
     {return myPageService.findAllReservation(customUserDetails,pageable);}
 
-    @PutMapping("userInfo")
+    @GetMapping("/userInfo")
+    public MyPageUserDetailResponse MyPageUserDetail(@AuthenticationPrincipal CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest)
+    {return myPageService.UserDetail(customUserDetails);}
+
+    @PutMapping("/userInfo")
     public MyPageUserDetailResponse MyPageUserDetailUpdate(@AuthenticationPrincipal CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest)
     {return myPageService.updateUserDetail(customUserDetails,myPageUserDetailRequest);}
 
-    @PostMapping("review/add")
+    @PostMapping("/review/add")
     public ReviewResponse AddReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, ReviewRequest reviewRequest)
     {
         try {
@@ -41,15 +45,15 @@ public class MyPageController {
         }
     }
 
-    @GetMapping("review/list")
+    @GetMapping("/review/list")
     public List<ReviewResponse> ReviewList(@AuthenticationPrincipal CustomUserDetails customUserDetails,Pageable pageable)
     {return myPageService.findAllReviews(customUserDetails,pageable);}
 
-    @PutMapping("review/update")
+    @PutMapping("/review/update")
     public ReviewResponse UpdateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,ReviewRequest reviewRequest)
     {return myPageService.updateReview(customUserDetails,reviewRequest);}
 
-    @DeleteMapping("review/delete/{reviewId}")
+    @DeleteMapping("/review/delete/{reviewId}")
     public ResponseDto DeleteReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Integer reviewId)
     {return myPageService.deleteReview(customUserDetails, reviewId);}
 }
