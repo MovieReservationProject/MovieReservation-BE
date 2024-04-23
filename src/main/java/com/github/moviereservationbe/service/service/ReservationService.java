@@ -18,6 +18,7 @@ import com.github.moviereservationbe.web.DTO.ResponseDto;
 import com.github.moviereservationbe.web.DTO.reservation.ReservationRequestDto;
 import com.github.moviereservationbe.web.DTO.reservation.ReservationResponseDto;
 import com.github.moviereservationbe.web.DTO.reservation.ReservationUpdateDto;
+import com.github.moviereservationbe.web.DTO.reservation.ScheduleResponseDto;
 import lombok.RequiredArgsConstructor;
 
 import org.aspectj.weaver.ast.Not;
@@ -29,9 +30,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -181,5 +184,73 @@ public class ReservationService {
         }catch(Exception e){
             return new ResponseDto(HttpStatus.BAD_REQUEST.value(), "Reservation update fail");
         }
+    }
+
+    public ResponseDto delete(CustomUserDetails customUserDetails, String reserveNum) {
+        User user= userJpa.findByMyIdFetchJoin(customUserDetails.getMyId())
+                .orElseThrow(()-> new NotFoundException("Cannot find user with ID: "+ customUserDetails.getMyId()));
+        Reservation reservation= reservationJpa.findByReserveNum(reserveNum)
+                .orElseThrow(()-> new NotFoundException("Cannot find reservation with reserve num: "+ reserveNum));
+        Schedule schedule= reservation.getSchedule();
+        if(schedule.getStartTime().isBefore(LocalDateTime.now())) throw new ExpiredException("This reservation is expired");
+        try{
+            //remaining seats +1
+            schedule.setRemainingSeats(schedule.getRemainingSeats()+1);
+            scheduleJpa.save(schedule);
+            //delete reservation
+            reservationJpa.delete(reservation);
+            return new ResponseDto(HttpStatus.OK.value(), "Reservation delete successful");
+        }catch(Exception e){
+            return new ResponseDto(HttpStatus.BAD_REQUEST.value(), "Reservation delete fail");
+
+        }
+
+    }
+
+    public List<String> findMovieCinemas(String titleKorean) {
+        Movie movie= movieJpa.findByTitleKorean(titleKorean)
+                .orElseThrow(()-> new NotFoundException("Cannot find movie with name: "+ titleKorean));
+        List<Schedule> scheduleList= movie.getScheduleList();
+        List<String> cinenaNameList= scheduleList.stream()
+                .map(schedule -> schedule.getCinemaType().getCinema().getCinemaName())
+                .distinct()
+                .collect(Collectors.toList());
+        return cinenaNameList;
+    }
+
+    public List<LocalDate> findMovieDates(String titleKorean, String cinemaName) {
+        Movie movie= movieJpa.findByTitleKorean(titleKorean)
+                .orElseThrow(()-> new NotFoundException("Cannot find movie with name: "+ titleKorean));
+        List<Schedule> scheduleList= movie.getScheduleList();
+        List<LocalDate> movieDateList= scheduleList.stream()
+                .filter(schedule -> schedule.getCinemaType().getCinema().getCinemaName().equals(cinemaName))
+                .map(schedule -> schedule.getStartTime().toLocalDate())
+                .distinct()
+                .collect(Collectors.toList());
+        return movieDateList;
+    }
+
+    public List<ScheduleResponseDto> findMovieTimes(String titleKorean, String cinemaName, LocalDate movieDate) {
+        Movie movie= movieJpa.findByTitleKorean(titleKorean)
+                .orElseThrow(()-> new NotFoundException("Cannot find movie with name: "+ titleKorean));
+        List<Schedule> scheduleList= movie.getScheduleList().stream()
+                .filter(schedule -> schedule.getCinemaType().getCinema().getCinemaName().equals(cinemaName))
+                .filter(schedule -> schedule.getStartTime().toLocalDate().equals(movieDate))
+                .collect(Collectors.toList());
+
+        List<LocalTime> movieTimes = scheduleList.stream().map(schedule -> schedule.getStartTime().toLocalTime()).collect(Collectors.toList());
+
+        List<ScheduleResponseDto> scheduleResponseDtoList = new ArrayList<>();
+        for(Schedule s: scheduleList) {
+            ScheduleResponseDto scheduleResponseDto = ScheduleResponseDto.builder()
+                    .cinemaTypeName(s.getCinemaType().getTypeName())
+                    .totalSeats(s.getCinemaType().getTotalSeats())
+                    .movieTime(movieTimes)
+                    .remainingSeats(s.getRemainingSeats())
+                    .build();
+
+            scheduleResponseDtoList.add(scheduleResponseDto);
+        }
+    return scheduleResponseDtoList;
     }
 }
