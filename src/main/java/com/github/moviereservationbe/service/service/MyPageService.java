@@ -15,6 +15,7 @@ import com.github.moviereservationbe.web.DTO.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -29,10 +30,10 @@ public class MyPageService {
     private final ReviewJpa reviewJpa;
     private final UserJpa userJpa;
 
-    public List<MyPageReservationResponse> findAllReservation(CustomUserDetails customUserDetails, Pageable pageable) {
+    public ResponseDto findAllReservation(CustomUserDetails customUserDetails, Pageable pageable) {
         userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("유저 정보를 조회할 수 없습니다"));
         Page<Reservation> myPageReservation = reservationJpa.findAll(pageable);
-        return myPageReservation.stream()
+        myPageReservation.stream()
                 .map((reservation) -> MyPageReservationResponse.builder()
                         .reserveNum(reservation.getReserveNum())
                         .reserveTime(reservation.getReserveTime())
@@ -41,46 +42,52 @@ public class MyPageService {
                         .cinemaName(String.valueOf(reservation.getSchedule().getCinemaType().getCinema().getCinemaName()))
                         .build())
                 .collect(Collectors.toList());
+        return new ResponseDto(HttpStatus.OK.value(),"",myPageReservation);
     }
 
-    public MyPageUserDetailResponse UserDetail(CustomUserDetails customUserDetails) {
+
+    //유저정보 조회
+    public ResponseDto UserDetail(CustomUserDetails customUserDetails) {
         User user = userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("유저 정보를 조회할 수 없습니다"));
-        return MyPageUserDetailResponse.builder()
+        MyPageUserDetailResponse myPageUserDetailResponse=MyPageUserDetailResponse.builder()
                 .name(user.getName())
                 .myId(user.getMyId())
                 .birthday(user.getBirthday())
                 .phoneNumber(user.getPhoneNumber())
                 .password(user.getPassword())
                 .build();
+        return new ResponseDto(HttpStatus.OK.value(),"",myPageUserDetailResponse);
     }
 
     //유저정보 변경
-    public MyPageUserDetailResponse updateUserDetail(CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest) {
+    public ResponseDto updateUserDetail(CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest) {
         User user = userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("유저 정보를 조회할 수 없습니다"));
         user.setUser(myPageUserDetailRequest);
-        return MyPageUserDetailResponse.builder()
+        MyPageUserDetailResponse myPageUserDetailResponse=MyPageUserDetailResponse.builder()
                 .name(user.getName())
                 .myId(user.getMyId())
                 .birthday(user.getBirthday())
                 .phoneNumber(user.getPhoneNumber())
                 .password(user.getPassword())
                 .build();
+        return new ResponseDto(HttpStatus.OK.value(),"",myPageUserDetailResponse);
     }
 
 
-    public List<ReviewResponse> findAllReviews(CustomUserDetails customUserDetails, Pageable pageable) {
+    public ResponseDto findAllReviews(CustomUserDetails customUserDetails, Pageable pageable) {
         userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("유저 정보를 조회할 수 없습니다"));
         Page<Review> reviews = reviewJpa.findAll(pageable);
-        return reviews.stream()
+        reviews.stream()
                 .map(review -> ReviewResponse.builder()
                         .reviewId(review.getReviewId())
                         .score(review.getScore())
                         .content(review.getContent())
                         .build())
                 .collect(Collectors.toList());
+        return new ResponseDto(HttpStatus.OK.value(),"",reviews);
     }
 
-    public ReviewResponse AddReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest) throws ReviewAlreadyExistsException {
+    public ResponseDto AddReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest) throws ReviewAlreadyExistsException {
         Integer userId = customUserDetails.getUserId();
         Integer movieId = reviewRequest.getMovieId(); // 리뷰 대상 영화의 ID
         Integer score = reviewRequest.getScore();
@@ -106,15 +113,16 @@ public class MyPageService {
 
         Review savedReview = reviewJpa.save(review);
 
-        return ReviewResponse.builder()
+        ReviewResponse.builder()
                 .reviewId(savedReview.getReviewId())
                 .score(score)
                 .content(content)
                 .reviewDate(savedReview.getReviewDate())
                 .build();
+        return new ResponseDto(HttpStatus.OK.value(),"리뷰가 저장되었습니다.");
     }
 
-    public ReviewResponse updateReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest) {
+    public ResponseDto updateReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest) {
         Integer userId = customUserDetails.getUserId();
         Integer movieId = reviewRequest.getMovieId();
         Integer score = reviewRequest.getScore(); // 수정할 평점
@@ -136,12 +144,13 @@ public class MyPageService {
 
         Review updateReview = reviewJpa.save(review);
 
-        return ReviewResponse.builder()
+        ReviewResponse.builder()
                 .reviewId(updateReview.getReviewId())
                 .score(updateReview.getScore())
                 .content(updateReview.getContent())
                 .reviewDate(updateReview.getReviewDate().atZone(ZoneId.systemDefault()).toLocalDateTime()) // LocalDateTime 으로 변환
                 .build();
+        return new ResponseDto(HttpStatus.OK.value(),"리뷰가 수정되었습니다.");
     }
 
     public ResponseDto deleteReview(CustomUserDetails customUserDetails, Integer reviewId) {

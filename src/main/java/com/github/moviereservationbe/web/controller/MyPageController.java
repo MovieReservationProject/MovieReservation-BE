@@ -24,19 +24,19 @@ public class MyPageController {
     private final MyPageService myPageService;
 
     @GetMapping("/reservation")
-    public List<MyPageReservationResponse> MyPageReservaionList(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable)
+    public ResponseDto MyPageReservaionList(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable)
     {return myPageService.findAllReservation(customUserDetails,pageable);}
 
     @GetMapping("/userInfo")
-    public MyPageUserDetailResponse MyPageUserDetail(@AuthenticationPrincipal CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest)
+    public ResponseDto MyPageUserDetail(@AuthenticationPrincipal CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest)
     {return myPageService.UserDetail(customUserDetails);}
 
     @PutMapping("/userInfo")
-    public MyPageUserDetailResponse MyPageUserDetailUpdate(@AuthenticationPrincipal CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest)
+    public ResponseDto MyPageUserDetailUpdate(@AuthenticationPrincipal CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest)
     {return myPageService.updateUserDetail(customUserDetails,myPageUserDetailRequest);}
 
     @PostMapping("/review/add")
-    public ReviewResponse AddReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, ReviewRequest reviewRequest)
+    public ResponseDto AddReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, ReviewRequest reviewRequest)
     {
         try {
             return myPageService.AddReview(customUserDetails,reviewRequest);
@@ -46,11 +46,11 @@ public class MyPageController {
     }
 
     @GetMapping("/review/list")
-    public List<ReviewResponse> ReviewList(@AuthenticationPrincipal CustomUserDetails customUserDetails,Pageable pageable)
+    public ResponseDto ReviewList(@AuthenticationPrincipal CustomUserDetails customUserDetails,Pageable pageable)
     {return myPageService.findAllReviews(customUserDetails,pageable);}
 
     @PutMapping("/review/update")
-    public ReviewResponse UpdateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,ReviewRequest reviewRequest)
+    public ResponseDto UpdateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,ReviewRequest reviewRequest)
     {return myPageService.updateReview(customUserDetails,reviewRequest);}
 
     @DeleteMapping("/review/delete/{reviewId}")
