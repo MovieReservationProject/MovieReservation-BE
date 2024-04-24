@@ -21,4 +21,5 @@ public class ScheduleResponse {
     private String startTime;
     private Integer remainingSeat;
     private String cinemaType;
+    private String moviePoster;
 }

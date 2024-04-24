@@ -24,7 +24,6 @@ import com.github.moviereservationbe.web.DTO.reservationDto.ScheduleResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +31,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -53,7 +53,7 @@ public class ReservationService {
             ScheduleResponse scheduleResponse = mapScheduleResponse(schedule);
             locationTheaters.add(scheduleResponse);
         }
-        return new ResponseDto(HttpStatus.OK.value(),"조회성공",locationTheaters);
+        return new ResponseDto(HttpStatus.OK.value(),"조회성공",Map.of("locationTheaters",locationTheaters));
     }
 
     public ScheduleResponse mapScheduleResponse(Schedule schedule){
@@ -64,6 +64,7 @@ public class ReservationService {
                 .startDate(schedule.getStartTime().toLocalDate().toString())
                 .startTime(schedule.getStartTime().toLocalTime().toString())
                 .remainingSeat(schedule.getRemainingSeats())
+                .moviePoster(schedule.getMovie().getPoster())
                 .build();
 
     }
@@ -77,7 +78,7 @@ public class ReservationService {
         LocalTime movieTime = reservationRequest.getReserveTime();
 
         User findUser = userJpa.findById(userId)
-                .orElseThrow(()-> new com.github.moviereservationbe.service.exceptions.NotFoundException("유저 ID("+userId+")에 해당하는 User는 없습니다."));
+                .orElseThrow(()-> new NotFoundException("유저 ID("+userId+")에 해당하는 User는 없습니다."));
         Date userBirthday =findUser.getBirthday();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(userBirthday);
@@ -143,7 +144,7 @@ public class ReservationService {
 
     @Transactional
     public ResponseDto changeTicketResult(CustomUserDetails customUserDetails, Integer reservationId, ReservationChange reservationChange) {
-        
+
         Integer userId = customUserDetails.getUserId();
         User user = userJpa.findById(userId).orElseThrow(()-> new NotFoundException("아이디에 해당하는 유저가 존재하지 않습니다."));
         //1. 예약 번호와 유저아이디로 예약한 거 찾기
@@ -156,16 +157,9 @@ public class ReservationService {
         }
         Movie findMovie = findSchedule.getMovie();
         CinemaType findCinemaType = findSchedule.getCinemaType();
-        Cinema findCinema = findCinemaType.getCinema();
         LocalDateTime findLocalDateTime = findSchedule.getStartTime();
         LocalDate findLocalDate = findLocalDateTime.toLocalDate();
-        //3. 시간만 변경 가능하니 예약한 스케줄에서 영화와 cinemaType과 동일한 다른 시간의 스케줄 리스트 찾기 *해당 리스트가 비어있으면 다른 시간으로 예약 불가능
-        List<Schedule> scheduleList = scheduleJpa.findByMovieAndCinemaType(findMovie,findCinemaType);
-        log.error("값: "+scheduleList);
-        if (scheduleList.isEmpty()){
-            throw new SoldOutException("해당 상영관에서 동일한 영화( "+findMovie.getTitleKorean()+" )의 예약 가능한 시간은 존재하지 않습니다.");
-        }
-        //4. 리스트 중에 요청한 시간(reservationChange)과 동일한 스케줄 찾기
+        //3. 예외처리
         LocalDateTime changeTime =LocalDateTime.of(findLocalDate,reservationChange.getChangeTime());
         if (changeTime.isBefore(LocalDateTime.now())){
             throw new ExpiredException("고르신 Ticket의 상영 날짜는 지난 날짜입니다.");
@@ -173,34 +167,42 @@ public class ReservationService {
         if (changeTime.equals(findLocalDateTime)){
             throw new ExpiredException("동일한 시간입니다.");
         }
-        Schedule changeSchedule = scheduleList.stream()
-                .filter((schedule)->schedule.getStartTime().equals(changeTime))
-                .findFirst()
-                .orElseThrow(()-> new NotFoundException("해당 시간의 Ticket은 없습니다."));
+        Schedule changeSchedule = scheduleJpa.findByCinemaTypeAndMovieAndStartTime(findCinemaType,findMovie,changeTime)
+                .orElseThrow(()->new NotFoundException("해당 시간의 Ticket은 없습니다."));
         try {
-            //5. 그 전에 찾은 스케줄에는 좌석 1개 더하기
-            reservationJpa.delete(reservation);
-            findSchedule.setRemainingSeats(findSchedule.getRemainingSeats() + 1);
-            //6. 찾은 스케줄은 예약 진행하고 좌석 1개 빼기
-            DateTimeFormatter datePattern = DateTimeFormatter.ofPattern("yyyy-MMdd");
 
-            Random random = new Random();
-            Integer randomNumber = random.nextInt(10000); // 0부터 9999까지의 랜덤 숫자 생성
-            String formattedCinemaId = String
-                    .format("%04d-%04d", findCinema.getCinemaId() + findCinemaType.getCinemaTypeId(), randomNumber);
-            LocalDateTime now = LocalDateTime.now();
-            String reserveNumber = now.format(datePattern) + "-" + formattedCinemaId;
-            Reservation changeReservation = new Reservation(user,reserveNumber,now,changeSchedule);
-
-           Reservation changeTicket= reservationJpa.save(changeReservation);
+            //4. 찾은 스케줄은 예약 진행하고 좌석 1개 빼기
+            reservation.setSchedule(changeSchedule);
+            reservation.setReserveTime(LocalDateTime.now());
             changeSchedule.setRemainingSeats(changeSchedule.getRemainingSeats()-1);
 
-            ReservationResponse reservationResponse = new ReservationResponse(changeTicket);
+            //5. 그 전에 찾은 스케줄에는 좌석 1개 더하기
+            findSchedule.setRemainingSeats(findSchedule.getRemainingSeats() + 1);
+            ReservationResponse reservationResponse = new ReservationResponse(reservation);
 
             return new ResponseDto(HttpStatus.OK.value(), "예약 변경에 성공",reservationResponse);
         }catch (Exception e){
             return new ResponseDto(HttpStatus.BAD_REQUEST.value(), "예약 변경 실패");
         }
 
+    }
+
+    public ResponseDto deleteReservation(CustomUserDetails customUserDetails, Integer reservationId) {
+        Integer userId = customUserDetails.getUserId();
+        User user = userJpa.findById(userId).orElseThrow(() -> new NotFoundException("아이디에 해당하는 유저가 존재하지 않습니다."));
+        Reservation reservation = reservationJpa.findByReserveIdAndUser(reservationId,user)
+                .orElseThrow(()-> new NotFoundException("예약 내역이 없습니다."));
+        Schedule findSchedule =reservation.getSchedule();
+        LocalDateTime startTime = findSchedule.getStartTime();
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        long minuteDifference = ChronoUnit.MINUTES.between(startTime, currentDateTime);
+
+        if (minuteDifference < 10){
+            return new ResponseDto(HttpStatus.BAD_REQUEST.value(), "상영 시간 10분 전이라 취소가 불가능합니다.");
+        } else{
+            reservationJpa.deleteById(reservationId);
+            return new ResponseDto(HttpStatus.OK.value(), "예약 취소 완료 되었습니다.");
+        }
     }
 }

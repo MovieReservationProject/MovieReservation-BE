@@ -1,5 +1,6 @@
 package com.github.moviereservationbe.repository.ReservationPage.schedule;
 
+import com.github.moviereservationbe.repository.Auth.user.User;
 import com.github.moviereservationbe.repository.MainPage.movie.Movie;
 import com.github.moviereservationbe.repository.ReservationPage.cinemaType.CinemaType;
 import io.swagger.models.auth.In;

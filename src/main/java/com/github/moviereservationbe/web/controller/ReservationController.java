@@ -31,6 +31,8 @@ public class ReservationController {
         return reservationService.changeTicketResult(customUserDetails,reservationId,reservationChange);
     }
 
-
-
+    @DeleteMapping("/delete")
+    public ResponseDto deleteReservation(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam("reservation-id") Integer reservationId){
+        return reservationService.deleteReservation(customUserDetails, reservationId);
+    }
 }
