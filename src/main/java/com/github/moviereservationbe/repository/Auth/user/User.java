@@ -42,8 +42,4 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true) //cascade, orphanRemoval 추가해보았음
     private List<UserRole> userRoleList;
 
-    public void setUser(MyPageUserDetailRequest myPageUserDetailRequest) {
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-    }
 }
