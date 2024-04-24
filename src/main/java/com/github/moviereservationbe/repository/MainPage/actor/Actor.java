@@ -1,10 +1,12 @@
 package com.github.moviereservationbe.repository.MainPage.actor;
 
 
+import com.github.moviereservationbe.repository.MainPage.movieActor.MovieActor;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -34,5 +36,7 @@ public class Actor {
     @Column(name= "height" , nullable = false)
     private Integer height;
 
+    @OneToMany(mappedBy = "actor")
+    private List<MovieActor> movieActorList;
 
 }
