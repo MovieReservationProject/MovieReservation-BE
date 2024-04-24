@@ -36,6 +36,7 @@ public class MyPageService {
         if(myPageReservation==null){throw new NotFoundException("예약 정보를 찾을 수 없습니다.");}
         myPageReservation.stream()
                 .map((reservation) -> MyPageReservationResponse.builder()
+                        .reserveId(reservation.getReserveId())
                         .reserveNum(reservation.getReserveNum())
                         .reserveTime(reservation.getReserveTime())
                         .titleKorean(String.valueOf(reservation.getSchedule().getMovie().getTitleKorean()))

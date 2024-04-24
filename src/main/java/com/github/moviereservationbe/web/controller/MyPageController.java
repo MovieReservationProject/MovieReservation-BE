@@ -28,15 +28,15 @@ public class MyPageController {
     {return myPageService.findAllReservation(customUserDetails,pageable);}
 
     @GetMapping("/userInfo")
-    public ResponseDto MyPageUserDetail(@AuthenticationPrincipal CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest)
+    public ResponseDto MyPageUserDetail(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody MyPageUserDetailRequest myPageUserDetailRequest)
     {return myPageService.UserDetail(customUserDetails);}
 
     @PutMapping("/userInfo")
-    public ResponseDto MyPageUserDetailUpdate(@AuthenticationPrincipal CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest)
+    public ResponseDto MyPageUserDetailUpdate(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody MyPageUserDetailRequest myPageUserDetailRequest)
     {return myPageService.updateUserDetail(customUserDetails,myPageUserDetailRequest);}
 
     @PostMapping("/review/add")
-    public ResponseDto AddReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, ReviewRequest reviewRequest)
+    public ResponseDto AddReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,@RequestBody ReviewRequest reviewRequest)
     {
         try {
             return myPageService.AddReview(customUserDetails,reviewRequest);
@@ -50,7 +50,7 @@ public class MyPageController {
     {return myPageService.findAllReviews(customUserDetails,pageable);}
 
     @PutMapping("/review/update")
-    public ResponseDto UpdateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,ReviewRequest reviewRequest)
+    public ResponseDto UpdateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,@RequestBody ReviewRequest reviewRequest)
     {return myPageService.updateReview(customUserDetails,reviewRequest);}
 
     @DeleteMapping("/review/delete/{reviewId}")
