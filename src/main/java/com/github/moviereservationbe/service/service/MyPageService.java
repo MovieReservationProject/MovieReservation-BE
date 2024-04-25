@@ -4,6 +4,7 @@ import com.github.moviereservationbe.repository.Auth.user.User;
 import com.github.moviereservationbe.repository.Auth.user.UserJpa;
 import com.github.moviereservationbe.repository.Auth.userDetails.CustomUserDetails;
 import com.github.moviereservationbe.repository.MainPage.movie.Movie;
+import com.github.moviereservationbe.repository.MainPage.movie.MovieJpa;
 import com.github.moviereservationbe.repository.ReservationPage.reservation.Reservation;
 import com.github.moviereservationbe.repository.ReservationPage.reservation.ReservationJpa;
 import com.github.moviereservationbe.repository.review.Review;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 @Service
 public class MyPageService {
     private final ReservationJpa reservationJpa;
+    private final MovieJpa movieJpa;
     private final ReviewJpa reviewJpa;
     private final UserJpa userJpa;
     private final PasswordEncoder passwordEncoder;
@@ -84,27 +86,29 @@ public class MyPageService {
                 .phoneNumber(user.getPhoneNumber())
                 .password(encodedPassword)
                 .build();
-        return new ResponseDto(HttpStatus.OK.value(),"",myPageUserDetailResponse);
+        return new ResponseDto(HttpStatus.OK.value(),"user detail updated successful",myPageUserDetailResponse);
     }
 
     //리뷰 조회
     public ResponseDto findAllReviews(CustomUserDetails customUserDetails, Pageable pageable) {
-        userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
+        userJpa.findById(customUserDetails.getUserId())
+                .orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
         Page<Review> reviews = reviewJpa.findAll(pageable);
-        reviews.stream()
+        List<ReviewResponse> reviewResponses = reviews.stream()
                 .map(review -> ReviewResponse.builder()
                         .reviewId(review.getReviewId())
                         .score(review.getScore())
                         .content(review.getContent())
                         .build())
                 .collect(Collectors.toList());
-        return new ResponseDto(HttpStatus.OK.value(),"",reviews);
-    }
 
+        return new ResponseDto(HttpStatus.OK.value(), "", reviewResponses);
+    }
     //리뷰 작성
     public ResponseDto AddReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest) throws ReviewAlreadyExistsException {
         Integer userId = customUserDetails.getUserId();
-        Integer movieId = reviewRequest.getMovieId(); // 리뷰 대상 영화의 ID
+        Movie movie=movieJpa.findById(customUserDetails.getUserId()).orElseThrow(()->new NotFoundException("영화를 찾을 수 없습니다."));
+        Integer movieId=movie.getMovieId();// 리뷰 대상 영화의 ID
         Integer score = reviewRequest.getScore();
         String content = reviewRequest.getContent();
 
@@ -136,11 +140,12 @@ public class MyPageService {
                 .build();
         return new ResponseDto(HttpStatus.OK.value(),"리뷰가 저장되었습니다.");
     }
-    
+
     //리뷰 수정
     public ResponseDto updateReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest) {
         Integer userId = customUserDetails.getUserId();
-        Integer movieId = reviewRequest.getMovieId();
+        Movie movie=movieJpa.findById(customUserDetails.getUserId()).orElseThrow(()->new NotFoundException("영화를 찾을 수 없습니다."));
+        Integer movieId=movie.getMovieId();
         Integer score = reviewRequest.getScore(); // 수정할 평점
         String content = reviewRequest.getContent();
 
