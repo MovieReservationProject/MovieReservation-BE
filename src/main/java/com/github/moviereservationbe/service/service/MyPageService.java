@@ -21,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,12 +83,16 @@ public class MyPageService {
         //only one review in one movie
         if(movieJpa.existsById(movie.getMovieId())) throw new BadRequestException("You have already posted review for this movie");
 
+        LocalDate reviewLocalDate= LocalDate.now();
+        //two ways of changing local date => date
+        Date reviewDate= Date.valueOf(reviewLocalDate); //Date is from java.sql.Date
+        //Date reviewDate= java.sql.Date.valueOf(reviewLocalDate);  //Date is from java.util.Date
         Review review= Review.builder()
                 .user(user)
                 .movie(movie)
                 .score(reviewDto.getScore())
                 .content(reviewDto.getContent())
-                .reviewDate() //date만 구하는 방법..?
+                .reviewDate(reviewDate) //date만 구하는 방법
                 .build();
 
         return new ResponseDto(HttpStatus.OK.value(), "Review add success");
@@ -116,10 +122,13 @@ public class MyPageService {
         review.setContent(reviewDto.getContent());
         reviewJpa.save(review);
 
+        LocalDate reviewLocalDate= LocalDate.now();
+        Date reviewDate= Date.valueOf(reviewLocalDate);
+
         ReviewDto reviewResponseDto= ReviewDto.builder()
                 .score(review.getScore())
                 .content(review.getContent())
-                .reviewDate() //date만 구하는 방법..?
+                .reviewDate(reviewDate) //date만 구하는 방법
                 .build();
         return new ResponseDto(HttpStatus.OK.value(), "Review update success", reviewResponseDto);
     }

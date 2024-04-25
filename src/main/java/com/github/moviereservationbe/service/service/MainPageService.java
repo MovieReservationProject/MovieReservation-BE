@@ -36,9 +36,6 @@ public class MainPageService {
         List<Movie> movieList= movieJpa.findAll();
         //from list entity get list entity
         //하나의 영화에 대해 여러개의 스케쥴을 받고, 그 스케쥴들에서 ticket sales구해야 함
-        List<Schedule> scheduleList= movieList.stream()
-                .map(movie -> movie.getScheduleList())
-                .collect(Collectors.toList());
         for(Movie movie: movieList){
             //ticket sales
             List<Schedule> scheduleList= movie.getScheduleList();
@@ -46,6 +43,9 @@ public class MainPageService {
             //score
             List<Review> reviewList= reviewJpa.findByMovieId(movie.getMovieId());
             double score= caculateScore(reviewList);
+            //save to movie
+            movie.setTicketSales(ticketSales);
+            movie.setScoreAvg(score);
         }
 
 
@@ -59,6 +59,7 @@ public class MainPageService {
                         movie.getDDay()
                 ))
                 .toList();
+        return new ResponseDto(HttpStatus.OK.value(), "Main page find success",mainPageResponseDtoList);
     }
 
     public ResponseDto findMovieDetail(String titleKorean) {
@@ -120,8 +121,10 @@ public class MainPageService {
         int totalRemainingSeats= 0;
         for(int x: remainingSeatsList)  totalRemainingSeats +=x;
         int totalSeats= caculateTotalSeats(scheduleList);
-        double ticketSales = ((double) totalSeats - totalRemainingSeats /totalSeats) * 100.0;
-        return ticketSales;
+        double ticketSales = ((double) (totalSeats - totalRemainingSeats) /totalSeats) * 100.0;
+        //show only until 소수점 첫째자리
+        double formattedTicketSales= Math.round(ticketSales*10.0)/10.0;
+        return formattedTicketSales;
     }
     private int caculateTotalSeats(List<Schedule> scheduleList){
         //get total seats per cinema
@@ -137,6 +140,7 @@ public class MainPageService {
         int scoreSum= reviewList.stream().mapToInt(Review::getScore).sum();
         int numberOfReviews=reviewList.size();
         double scoreAvg= (double) scoreSum/numberOfReviews;
+        double formattedScoreAvg= Math.round(scoreAvg+10.0)/10.0;
         return scoreAvg;
     }
 }
