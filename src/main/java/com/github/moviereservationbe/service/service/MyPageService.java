@@ -111,7 +111,8 @@ public class MyPageService {
         List<ReviewDto> reviewDtoList= reviewList.stream()
                 .map(review -> new ReviewDto(
                         review.getScore(),
-                        review.getContent()
+                        review.getContent(),
+                        review.getReviewDate()
                 )).collect(Collectors.toList());
 
         return new ResponseDto(HttpStatus.OK.value(), "User review find success", reviewDtoList);
