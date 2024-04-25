@@ -13,7 +13,6 @@ import com.github.moviereservationbe.service.exceptions.NotFoundException;
 import com.github.moviereservationbe.service.exceptions.ReviewAlreadyExistsException;
 import com.github.moviereservationbe.web.DTO.MyPage.*;
 import com.github.moviereservationbe.web.DTO.ResponseDto;
-import jakarta.websocket.Encoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +35,8 @@ public class MyPageService {
     private final ReviewJpa reviewJpa;
     private final UserJpa userJpa;
     private final PasswordEncoder passwordEncoder;
+
+
 
     public ResponseDto findAllReservation(CustomUserDetails customUserDetails, Pageable pageable) {
         userJpa.findById(customUserDetails.getUserId())
@@ -75,16 +76,17 @@ public class MyPageService {
     //유저정보 변경
     public ResponseDto updateUserDetail(CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest) {
         User user = userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
-        user.setPassword(myPageUserDetailRequest.getPassword());
+        String newPassword=myPageUserDetailRequest.getPassword();
+        String hashedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(hashedPassword);
         user.setPhoneNumber(myPageUserDetailRequest.getPhoneNumber());
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
         userJpa.save(user);
         MyPageUserDetailResponse myPageUserDetailResponse=MyPageUserDetailResponse.builder()
                 .name(user.getName())
                 .myId(user.getMyId())
                 .birthday(user.getBirthday())
                 .phoneNumber(user.getPhoneNumber())
-                .password(encodedPassword)
+                .password(hashedPassword)
                 .build();
         return new ResponseDto(HttpStatus.OK.value(),"user detail updated successful",myPageUserDetailResponse);
     }
