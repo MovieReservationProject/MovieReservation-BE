@@ -1,6 +1,7 @@
 package com.github.moviereservationbe.web.controller;
 
 import com.github.moviereservationbe.repository.Auth.userDetails.CustomUserDetails;
+import com.github.moviereservationbe.service.exceptions.NotFoundException;
 import com.github.moviereservationbe.service.exceptions.ReviewAlreadyExistsException;
 import com.github.moviereservationbe.service.service.MyPageService;
 import com.github.moviereservationbe.web.DTO.MyPage.*;
@@ -54,6 +55,11 @@ public class MyPageController {
     {return myPageService.updateReview(customUserDetails,reviewRequest);}
 
     @DeleteMapping("/review/delete/{reviewId}")
-    public ResponseDto DeleteReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Integer reviewId)
-    {return myPageService.deleteReview(customUserDetails, reviewId);}
+    public ResponseDto deleteReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Integer reviewId) {
+        try {
+            return myPageService.deleteReview(customUserDetails, reviewId);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
 }

@@ -36,8 +36,6 @@ public class MyPageService {
     private final UserJpa userJpa;
     private final PasswordEncoder passwordEncoder;
 
-
-
     public ResponseDto findAllReservation(CustomUserDetails customUserDetails, Pageable pageable) {
         userJpa.findById(customUserDetails.getUserId())
                 .orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
@@ -181,7 +179,7 @@ public class MyPageService {
         Optional<Review> reviewOptional = reviewJpa.findById(reviewId);
         if (reviewOptional.isPresent()) {
             Review review = reviewOptional.get();
-            if (!review.getUser().getUserId().equals(customUserDetails.getUserId())) {
+            if (customUserDetails != null && !review.getUser().getUserId().equals(customUserDetails.getUserId())) {
                 throw new IllegalArgumentException("해당 리뷰를 삭제할 권한이 없습니다.");
             }
             reviewJpa.delete(review);
@@ -191,3 +189,4 @@ public class MyPageService {
         }
     }
 }
+
