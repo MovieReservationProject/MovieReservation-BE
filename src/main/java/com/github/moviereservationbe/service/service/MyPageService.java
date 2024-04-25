@@ -12,10 +12,12 @@ import com.github.moviereservationbe.service.exceptions.NotFoundException;
 import com.github.moviereservationbe.service.exceptions.ReviewAlreadyExistsException;
 import com.github.moviereservationbe.web.DTO.MyPage.*;
 import com.github.moviereservationbe.web.DTO.ResponseDto;
+import jakarta.websocket.Encoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -23,28 +25,35 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
+
 @RequiredArgsConstructor
 @Service
 public class MyPageService {
     private final ReservationJpa reservationJpa;
     private final ReviewJpa reviewJpa;
     private final UserJpa userJpa;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseDto findAllReservation(CustomUserDetails customUserDetails, Pageable pageable) {
-        userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
-        Page<Reservation> myPageReservation = reservationJpa.findAll(pageable);
-        if(myPageReservation==null){throw new NotFoundException("예약 정보를 찾을 수 없습니다.");}
-        myPageReservation.stream()
-                .map((reservation) -> MyPageReservationResponse.builder()
-                        .reserveId(reservation.getReserveId())
-                        .reserveNum(reservation.getReserveNum())
-                        .reserveTime(reservation.getReserveTime())
-                        .titleKorean(String.valueOf(reservation.getSchedule().getMovie().getTitleKorean()))
-                        .titleEnglish(String.valueOf(reservation.getSchedule().getMovie().getTitleEnglish()))
-                        .cinemaName(String.valueOf(reservation.getSchedule().getCinemaType().getCinema().getCinemaName()))
-                        .build())
-                .collect(Collectors.toList());
-        return new ResponseDto(HttpStatus.OK.value(),"",myPageReservation);
+        userJpa.findById(customUserDetails.getUserId())
+                .orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
+
+        // 예약 정보를 페이지로 조회
+        Page<Reservation> reservationPage = reservationJpa.findAll(pageable);
+
+        // 예약 정보를 DTO로 변환
+        Page<MyPageReservationResponse> responsePage = reservationPage.map(reservation -> MyPageReservationResponse.builder()
+                .reserveId(reservation.getReserveId())
+                .reserveNum(reservation.getReserveNum())
+                .reserveTime(reservation.getReserveTime())
+                .titleKorean(String.valueOf(reservation.getSchedule().getMovie().getTitleKorean()))
+                .titleEnglish(String.valueOf(reservation.getSchedule().getMovie().getTitleEnglish()))
+                .cinemaName(String.valueOf(reservation.getSchedule().getCinemaType().getCinema().getCinemaName()))
+                .build());
+
+        // 페이징된 예약 정보를 반환
+        return new ResponseDto(HttpStatus.OK.value(), "", responsePage);
     }
 
 
@@ -66,13 +75,14 @@ public class MyPageService {
         User user = userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
         user.setPassword(myPageUserDetailRequest.getPassword());
         user.setPhoneNumber(myPageUserDetailRequest.getPhoneNumber());
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
         userJpa.save(user);
         MyPageUserDetailResponse myPageUserDetailResponse=MyPageUserDetailResponse.builder()
                 .name(user.getName())
                 .myId(user.getMyId())
                 .birthday(user.getBirthday())
                 .phoneNumber(user.getPhoneNumber())
-                .password(user.getPassword())
+                .password(encodedPassword)
                 .build();
         return new ResponseDto(HttpStatus.OK.value(),"",myPageUserDetailResponse);
     }
