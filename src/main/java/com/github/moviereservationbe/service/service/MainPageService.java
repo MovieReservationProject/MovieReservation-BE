@@ -20,6 +20,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +44,10 @@ public class MainPageService {
             //score
             List<Review> reviewList= reviewJpa.findByMovieId(movie.getMovieId());
             double score= caculateScore(reviewList);
+            //dDay
+            Date releaseDate= movie.getReleaseDate();
+            LocalDate localReleaseDate= releaseDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            if(localReleaseDate.isBefore(LocalDate.now())) movie.setDDay(0);
             //save to movie
             movie.setTicketSales(ticketSales);
             movie.setScoreAvg(score);
