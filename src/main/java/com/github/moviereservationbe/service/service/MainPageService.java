@@ -29,40 +29,46 @@ public class MainPageService {
     private final MovieJpa movieJpa;
     private final ScheduleJpa scheduleJpa;
     private final CinemaTypeJpa cinemaTypeJpa;
-    private ActorJpa actorJpa;
-    private ReviewJpa reviewJpa;
+    private final ActorJpa actorJpa;
+    private final ReviewJpa reviewJpa;
 
-//    public ResponseDto findMainPage() {
-//        List<Movie> movieList= movieJpa.findAll();
-//        //ticket sales
-//        //remaining seats(schedule) / total seats(cinema type) * 100
-//
-//        //score
-//        //score(review) 다 더해서/ number of review
-//        List<MainPageResponseDto> mainPageResponseDtoList= movieList.stream()
-//                .map(movie -> new MainPageResponseDto(
-//                        movie.getPoster(),
-//                        movie.getTitleKorean(),
-//                        movie.getReleaseDate(),
-//                        movie.getDDay()
-//                ))
-//                .toList()
-//    }
+    public ResponseDto findMainPage() {
+        List<Movie> movieList= movieJpa.findAll();
+        //from list entity get list entity
+        //하나의 영화에 대해 여러개의 스케쥴을 받고, 그 스케쥴들에서 ticket sales구해야 함
+        List<Schedule> scheduleList= movieList.stream()
+                .map(movie -> movie.getScheduleList())
+                .collect(Collectors.toList());
+        for(Movie movie: movieList){
+            //ticket sales
+            List<Schedule> scheduleList= movie.getScheduleList();
+            double ticketSales= caculateTicketSales(scheduleList);
+            //score
+            List<Review> reviewList= reviewJpa.findByMovieId(movie.getMovieId());
+            double score= caculateScore(reviewList);
+        }
+
+
+        List<MainPageResponseDto> mainPageResponseDtoList= movieList.stream()
+                .map(movie -> new MainPageResponseDto(
+                        movie.getPoster(),
+                        movie.getTitleKorean(),
+                        movie.getTicketSales(),
+                        movie.getReleaseDate(),
+                        movie.getScoreAvg(),
+                        movie.getDDay()
+                ))
+                .toList();
+    }
 
     public ResponseDto findMovieDetail(String titleKorean) {
         Movie movie= movieJpa.findByTitleKorean(titleKorean)
                 .orElseThrow(()-> new NotFoundException("Cannot find movie with title: " + titleKorean));
+//        Movie movie= movieJpa.findByTitleEnglish(titleKorean)
+//                .orElseThrow(()-> new NotFoundException("Cannot find movie with title: " + titleKorean));
         //ticket sales
-        //remaining seats(schedule) / total seats(cinema type) * 100
-        //1. get List<schedule> to get remaining seats
-        //2. for each schedule in list, get total seats from cinema type
-        //3. do the math
         List<Schedule> scheduleList= movie.getScheduleList().stream().toList();
-        List<Integer> remainingSeatsList= scheduleList.stream().map(Schedule::getRemainingSeats).toList();
-        int totalRemainingSeats= 0;
-        for(int x: remainingSeatsList)  totalRemainingSeats +=x;
-        int totalSeats= caculateTotalSeats(scheduleList);
-        double ticketSales = ((double) totalRemainingSeats /totalSeats) * 100.0;
+        double ticketSales= caculateTicketSales(scheduleList);
 
 
         //actorList에서 배우 이름만 가져옴
@@ -70,6 +76,7 @@ public class MainPageService {
         List<String> actorNameList= actorList.stream().map(Actor::getActorName).collect(Collectors.toList());
         //reviewList
         List<Review> reviewList= reviewJpa.findByMovieId(movie.getMovieId());
+        //make DTO list from Entity List
         List<ReviewResponseDto> reviewResponseDtoList= reviewList.stream()
                 .map(review -> new ReviewResponseDto(
                         review.getUser().getName(),
@@ -81,10 +88,7 @@ public class MainPageService {
 
 
         //score
-        //score(review) 다 더해서 / number of review
-        int scoreSum= reviewList.stream().mapToInt(Review::getScore).sum();
-        int numberOfReviews=reviewList.size();
-        double scoreAvg= (double) scoreSum/numberOfReviews;
+        double scoreAvg= caculateScore(reviewList);
 
         MovieDetailResponseDto movieDetailResponseDto= MovieDetailResponseDto.builder()
                 .moviePoster(movie.getPoster())
@@ -98,6 +102,7 @@ public class MainPageService {
                 .screenTime(movie.getScreenTime())
                 .country(movie.getCountry())
                 .director(movie.getDirector())
+                .genre(movie.getGenre())
                 .status(movie.getStatus())
                 .summary(movie.getSummary())
                 .actorNameList(actorNameList)
@@ -106,6 +111,18 @@ public class MainPageService {
         return new ResponseDto(HttpStatus.OK.value(), "movie detail find success", movieDetailResponseDto);
     }
 
+    private double caculateTicketSales(List<Schedule> scheduleList){
+        //remaining seats(schedule) / total seats(cinema type) * 100
+        //1. get List<schedule> to get remaining seats
+        //2. for each schedule in list, get total seats from cinema type
+        //3. do the math
+        List<Integer> remainingSeatsList= scheduleList.stream().map(Schedule::getRemainingSeats).toList();
+        int totalRemainingSeats= 0;
+        for(int x: remainingSeatsList)  totalRemainingSeats +=x;
+        int totalSeats= caculateTotalSeats(scheduleList);
+        double ticketSales = ((double) totalSeats - totalRemainingSeats /totalSeats) * 100.0;
+        return ticketSales;
+    }
     private int caculateTotalSeats(List<Schedule> scheduleList){
         //get total seats per cinema
         int totalSeats= scheduleList.stream()
@@ -113,6 +130,13 @@ public class MainPageService {
                 .mapToInt(Integer::intValue)
                 .sum();
         return totalSeats;
+    }
 
+    private double caculateScore(List<Review> reviewList){
+        //score(review) 다 더해서 / number of review
+        int scoreSum= reviewList.stream().mapToInt(Review::getScore).sum();
+        int numberOfReviews=reviewList.size();
+        double scoreAvg= (double) scoreSum/numberOfReviews;
+        return scoreAvg;
     }
 }

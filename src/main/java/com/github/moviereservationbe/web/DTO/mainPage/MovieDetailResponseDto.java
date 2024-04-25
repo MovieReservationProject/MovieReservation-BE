@@ -1,5 +1,6 @@
 package com.github.moviereservationbe.web.DTO.mainPage;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -24,6 +25,7 @@ public class MovieDetailResponseDto {
     private String titleEnglish;
     @JsonProperty("ticket-sales")
     private Double ticketSales;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("release-date")
     private Date releaseDate;
     @JsonProperty("score-avg")
@@ -48,4 +50,23 @@ public class MovieDetailResponseDto {
     private List<String> actorNameList;
     @JsonProperty("review")
     private List<ReviewResponseDto> reviewResponseDtoList;
+
+    public MovieDetailResponseDto(String moviePoster, String titleKorean, String titleEnglish, Double ticketSales, Date releaseDate, Double scoreAvg, Integer dDay, Integer ageLimit, Integer screenTime, String country, String director, String genre, String status, String summary, List<String> actorNameList, List<ReviewResponseDto> reviewResponseDtoList) {
+        this.moviePoster = moviePoster;
+        this.titleKorean = titleKorean;
+        this.titleEnglish = titleEnglish;
+        this.ticketSales = ticketSales;
+        this.releaseDate = releaseDate;
+        this.scoreAvg = scoreAvg != null? scoreAvg: 10;
+        this.dDay = dDay > 0? dDay : 0;
+        this.ageLimit = ageLimit;
+        this.screenTime = screenTime;
+        this.country = country;
+        this.director = director;
+        this.genre = genre;
+        this.status = status;
+        this.summary = summary;
+        this.actorNameList = actorNameList;
+        this.reviewResponseDtoList = reviewResponseDtoList;
+    }
 }

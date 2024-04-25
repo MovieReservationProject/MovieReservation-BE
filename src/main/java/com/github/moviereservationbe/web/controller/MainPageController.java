@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value="/main")
 public class MainPageController {
     private final MainPageService mainPageService;
-//    @GetMapping("/findAll")
-//    public ResponseDto findMainPage(){
-//        return mainPageService.findMainPage();
-//    }
+    @GetMapping("/findAll")
+    public ResponseDto findMainPage(){
+        return mainPageService.findMainPage();
+    }
 
     @GetMapping("/findMovie/{titleKorean}")
     public ResponseDto findMovieDetail(@PathVariable String titleKorean){
