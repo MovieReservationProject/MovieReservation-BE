@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ReservationJpa extends JpaRepository<Reservation, Integer> {
-//    Page<MyPageReservationResponse> findAllReservation(Pageable pageable);
+
 }
