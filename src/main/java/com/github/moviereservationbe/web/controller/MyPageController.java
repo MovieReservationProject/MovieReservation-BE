@@ -28,7 +28,7 @@ public class MyPageController {
     {return myPageService.findAllReservation(customUserDetails,pageable);}
 
     @GetMapping("/userInfo")
-    public ResponseDto MyPageUserDetail(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody MyPageUserDetailRequest myPageUserDetailRequest)
+    public ResponseDto MyPageUserDetail(@AuthenticationPrincipal CustomUserDetails customUserDetails)
     {return myPageService.UserDetail(customUserDetails);}
 
     @PutMapping("/userInfo")
