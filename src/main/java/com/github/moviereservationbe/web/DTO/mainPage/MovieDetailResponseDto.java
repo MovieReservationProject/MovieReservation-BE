@@ -10,12 +10,13 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+import static java.lang.Double.NaN;
+
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class MovieDetailResponseDto {
     @JsonProperty("movie-poster")
     private String moviePoster;
@@ -57,7 +58,7 @@ public class MovieDetailResponseDto {
         this.titleEnglish = titleEnglish;
         this.ticketSales = ticketSales;
         this.releaseDate = releaseDate;
-        this.scoreAvg = scoreAvg != null? scoreAvg: 10;
+        this.scoreAvg = Double.isNaN(scoreAvg) ? 10: scoreAvg;
         this.dDay = dDay > 0? dDay : 0;
         this.ageLimit = ageLimit;
         this.screenTime = screenTime;

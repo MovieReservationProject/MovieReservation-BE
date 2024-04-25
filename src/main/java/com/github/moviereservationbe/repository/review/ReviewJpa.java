@@ -1,6 +1,7 @@
 package com.github.moviereservationbe.repository.review;
 
 import com.github.moviereservationbe.repository.Auth.user.User;
+import com.github.moviereservationbe.repository.MainPage.movie.Movie;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -25,4 +26,12 @@ public interface ReviewJpa extends JpaRepository<Review, Integer> {
     )
     List<Review> findByUser(User user);
 
+    @Query(
+            "SELECT r " +
+                    "FROM Review r " +
+                    "JOIN r.user u " +
+                    "JOIN r.movie m " +
+                    "WHERE u= :user AND m= :movie "
+    )
+    List<Review> findByUserAndMovie(User user, Movie movie);
 }

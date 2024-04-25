@@ -15,7 +15,6 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class MainPageResponseDto {
     @JsonProperty("movie-poster")
     private String moviePoster;
@@ -29,4 +28,13 @@ public class MainPageResponseDto {
     private Double scoreAvg;
     @JsonProperty("D-day")
     private Integer dDay;
+
+    public MainPageResponseDto(String moviePoster, String titleKorean, Double ticketSales, Date releaseDate, Double scoreAvg, Integer dDay) {
+        this.moviePoster = moviePoster;
+        this.titleKorean = titleKorean;
+        this.ticketSales = ticketSales;
+        this.releaseDate = releaseDate;
+        this.scoreAvg = Double.isNaN(scoreAvg) ? 10: scoreAvg;
+        this.dDay = dDay;
+    }
 }

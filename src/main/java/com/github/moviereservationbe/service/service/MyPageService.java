@@ -81,7 +81,10 @@ public class MyPageService {
         Movie movie= movieJpa.findById(movieId)
                 .orElseThrow(()-> new NotFoundException("Cannot find movie with Id: "+ movieId));
         //only one review in one movie
-        if(movieJpa.existsById(movie.getMovieId())) throw new BadRequestException("You have already posted review for this movie");
+        if(!reviewJpa.findByUserAndMovie(user, movie).isEmpty()) throw new BadRequestException("You have already posted review for this movie");
+        //if score<0 or score>10 not valid
+        int score= reviewDto.getScore();
+        if(score<0 || score>10) throw new BadRequestException("Score can only be from 1 to 10");
 
         LocalDate reviewLocalDate= LocalDate.now();
         //two ways of changing local date => date
@@ -90,10 +93,11 @@ public class MyPageService {
         Review review= Review.builder()
                 .user(user)
                 .movie(movie)
-                .score(reviewDto.getScore())
+                .score(score)
                 .content(reviewDto.getContent())
                 .reviewDate(reviewDate) //date만 구하는 방법
                 .build();
+        reviewJpa.save(review);
 
         return new ResponseDto(HttpStatus.OK.value(), "Review add success");
     }

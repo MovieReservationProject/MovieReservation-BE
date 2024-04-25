@@ -27,8 +27,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MainPageService {
     private final MovieJpa movieJpa;
-    private final ScheduleJpa scheduleJpa;
-    private final CinemaTypeJpa cinemaTypeJpa;
     private final ActorJpa actorJpa;
     private final ReviewJpa reviewJpa;
 
@@ -121,7 +119,7 @@ public class MainPageService {
         int totalRemainingSeats= 0;
         for(int x: remainingSeatsList)  totalRemainingSeats +=x;
         int totalSeats= caculateTotalSeats(scheduleList);
-        double ticketSales = ((double) (totalSeats - totalRemainingSeats) /totalSeats) * 100.0;
+        double ticketSales = ((double) (totalSeats - totalRemainingSeats) /totalSeats * 100.0) ;
         //show only until 소수점 첫째자리
         double formattedTicketSales= Math.round(ticketSales*10.0)/10.0;
         return formattedTicketSales;
