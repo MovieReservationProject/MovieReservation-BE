@@ -55,7 +55,7 @@ public class MyPageController {
     {return myPageService.updateReview(customUserDetails,reviewRequest);}
 
     @DeleteMapping("/review/delete/{reviewId}")
-    public ResponseDto deleteReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Integer reviewId) {
+    public ResponseDto deleteReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("reviewId") Integer reviewId) {
         try {
             return myPageService.deleteReview(customUserDetails, reviewId);
         } catch (NotFoundException e) {

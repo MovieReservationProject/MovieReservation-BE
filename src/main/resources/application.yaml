@@ -10,16 +10,16 @@ spring:
   #    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 
   datasource:
-    username: root
-    password: nebyulla2024
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://database-1.cn6ioosku2ij.ap-northeast-2.rds.amazonaws.com:3306/movie_project?allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mariadb://database-1.cn6ioosku2ij.ap-northeast-2.rds.amazonaws.com:3306/movie_project?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
 
   jpa:
     show-sql: true
 
 jwtpassword:
-  source: JWT_SECRET_KEY
+  source: ${JWT_SECRET_KEY}
 
   logging:
     level: debug
