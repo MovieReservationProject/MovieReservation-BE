@@ -22,20 +22,20 @@ public interface MovieJpa extends JpaRepository<Movie, Integer> {
     @Modifying
     @Query(
             value = "UPDATE movie AS A " +
-                    "INNER JOIN (SELECT movie_id, (count(score) / sum(score)) AS avg_score " +
+                    "INNER JOIN (SELECT movie_id, (count(score) / sum(score)) AS SCORE_AVG " +
                     "            FROM review group by movie_id) AS B ON A.movie_id = B.movie_id " +
-                    " SET A.score_avg = B.avg_score "
+                    " SET A.score_avg = B.SCORE_AVG "
     , nativeQuery = true)
     void updateScoreAvg();
 
-    Page<Movie> findAll(Pageable pageable);
+    Page<Movie> findBydDayAfter(int day, Pageable pageable);
 
     @Transactional
     @Modifying
     @Query(
             value = "UPDATE movie AS A " +
-                    "INNER JOIN (SELECT release_date, DATEDIFF (now(), release_date) AS D_DAY " +
-                    "             FROM movie) AS B ON A.release_date = B.release_date " +
+                    "INNER JOIN (SELECT movie_id, DATEDIFF(release_date, now()) AS D_DAY " +
+                    "             FROM movie) AS B ON A.movie_id = B.movie_id " +
                     "SET A.d_day = B.D_DAY "
     , nativeQuery = true)
     void updateD_Day();

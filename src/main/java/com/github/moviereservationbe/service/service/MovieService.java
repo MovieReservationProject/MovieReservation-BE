@@ -8,9 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.Period;
-
 @Service
 @RequiredArgsConstructor
 public class MovieService {
@@ -27,7 +24,7 @@ public class MovieService {
 
         //2. 리스트 조회
         PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(sort.equals("1") ? "ticketSales" : "scoreAvg").descending());
-        return movieJpa.findAll(pageRequest);
+        return movieJpa.findBydDayAfter(0, pageRequest);
     }
 
 }
