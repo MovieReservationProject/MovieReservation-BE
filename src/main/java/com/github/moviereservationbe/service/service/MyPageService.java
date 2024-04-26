@@ -58,6 +58,9 @@ public class MyPageService {
     public ResponseDto updateMyInfo(CustomUserDetails customUserDetails, UserUpdateRequestDto userUpdateRequestDto) {
         User user= userJpa.findByMyIdFetchJoin(customUserDetails.getMyId())
                 .orElseThrow(()-> new NotFoundException("Cannot find user with myId: "+ customUserDetails.getMyId()));
+        List<String> userMyIds= userJpa.findAll().stream().map(User::getName).collect(Collectors.toList());
+        //ckeck already existing ID
+        if(userMyIds.contains(userUpdateRequestDto.getMyId())) throw new BadRequestException("Cannot change myId, this Id already exists");
         user.setMyId(userUpdateRequestDto.getMyId());
         user.setPassword(passwordEncoder.encode(userUpdateRequestDto.getPassword()));
         user.setBirthday(userUpdateRequestDto.getBirthday());
