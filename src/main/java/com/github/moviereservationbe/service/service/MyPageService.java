@@ -124,8 +124,8 @@ public class MyPageService {
     public ResponseDto updateMyReview(CustomUserDetails customUserDetails, Integer reviewId, ReviewDto reviewDto) {
         User user= userJpa.findByMyIdFetchJoin(customUserDetails.getMyId())
                 .orElseThrow(()-> new NotFoundException("Cannot find user with myId: "+ customUserDetails.getMyId()));
-        Review review= reviewJpa.findById(reviewId)
-                .orElseThrow(()-> new NotFoundException("Cannot find review with Id: "+ reviewId));
+        Review review= reviewJpa.findByReviewIdAndUser(reviewId, user) //이로써 내가 쓴 리뷰만 불러오게 된다.
+                .orElseThrow(()-> new NotFoundException("Cannot find review with Id and User: "+ reviewId));
         review.setScore(reviewDto.getScore());
         review.setContent(reviewDto.getContent());
         reviewJpa.save(review);
@@ -144,8 +144,8 @@ public class MyPageService {
     public ResponseDto deleteMyReview(CustomUserDetails customUserDetails, Integer reviewId) {
         User user= userJpa.findByMyIdFetchJoin(customUserDetails.getMyId())
                 .orElseThrow(()-> new NotFoundException("Cannot find user with myId: "+ customUserDetails.getMyId()));
-        Review review= reviewJpa.findById(reviewId)
-                .orElseThrow(()-> new NotFoundException("Cannot find review with Id: "+ reviewId));
+        Review review= reviewJpa.findByReviewIdAndUser(reviewId, user) //이로써 내가 쓴 리뷰만 불러오게 된다.
+                .orElseThrow(()-> new NotFoundException("Cannot find review with Id and User: "+ reviewId));
         reviewJpa.delete(review);
         return new ResponseDto(HttpStatus.OK.value(), "Review delete success");
     }

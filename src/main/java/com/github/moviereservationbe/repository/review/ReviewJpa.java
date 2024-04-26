@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReviewJpa extends JpaRepository<Review, Integer> {
@@ -34,4 +35,13 @@ public interface ReviewJpa extends JpaRepository<Review, Integer> {
                     "WHERE u= :user AND m= :movie "
     )
     List<Review> findByUserAndMovie(User user, Movie movie);
+
+    @Query(
+            "SELECT r " +
+                    "FROM Review r " +
+                    "JOIN r.user u " +
+                    "WHERE r.reviewId = :reviewId AND u= :user"
+    )
+
+    Optional<Review> findByReviewIdAndUser(Integer reviewId, User user);
 }
