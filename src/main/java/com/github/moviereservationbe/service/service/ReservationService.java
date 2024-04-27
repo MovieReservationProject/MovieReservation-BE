@@ -195,13 +195,10 @@ public class ReservationService {
 
         //상영 날짜시간과 현재 날짜시간 타임스탬프로 변환
         long startTimestamp = startTime.toInstant(ZoneOffset.UTC).toEpochMilli();
-        System.out.println(startTimestamp);
-
         long currentTimestamp = currentDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
-        System.out.println(currentTimestamp);
+
         //변환한 두 날짜시간를 분으로 변환하여 시간 차이 계산
         long minuteDifference = (startTimestamp - currentTimestamp) / (1000*60);
-        System.out.println(minuteDifference);
         if (minuteDifference >= 10){
             reservationJpa.deleteById(reservationId);
             return new ResponseDto(HttpStatus.OK.value(), "예약 취소 완료 되었습니다.");
