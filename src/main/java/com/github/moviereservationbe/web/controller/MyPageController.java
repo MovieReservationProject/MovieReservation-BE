@@ -1,6 +1,7 @@
 package com.github.moviereservationbe.web.controller;
 
 import com.github.moviereservationbe.repository.Auth.userDetails.CustomUserDetails;
+import com.github.moviereservationbe.repository.MainPage.movie.Movie;
 import com.github.moviereservationbe.service.exceptions.NotFoundException;
 import com.github.moviereservationbe.service.exceptions.ReviewAlreadyExistsException;
 import com.github.moviereservationbe.service.service.MyPageService;
@@ -36,11 +37,11 @@ public class MyPageController {
     public ResponseDto MyPageUserDetailUpdate(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody MyPageUserDetailRequest myPageUserDetailRequest)
     {return myPageService.updateUserDetail(customUserDetails,myPageUserDetailRequest);}
 
-    @PostMapping("/review/add")
-    public ResponseDto AddReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,@RequestBody ReviewRequest reviewRequest)
+    @PostMapping("/review/add/{movieId}")
+    public ResponseDto AddReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("movieId") int movieid, @RequestBody ReviewRequest reviewRequest)
     {
         try {
-            return myPageService.AddReview(customUserDetails,reviewRequest);
+            return myPageService.AddReview(customUserDetails,reviewRequest,movieid);
         } catch (ReviewAlreadyExistsException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
