@@ -79,8 +79,10 @@ public class MyPageService {
     public ResponseDto updateUserDetail(CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest) {
         User user = userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
         String newPassword=myPageUserDetailRequest.getPassword();
+        if(newPassword.isEmpty()){throw new NotFoundException("새 비밀번호를 입력해주세요");}
         String hashedPassword = passwordEncoder.encode(newPassword);
         user.setPassword(hashedPassword);
+        if(myPageUserDetailRequest.getPhoneNumber().isEmpty()){throw new NotFoundException("새 비밀번호를 입력해주세요");}
         user.setPhoneNumber(myPageUserDetailRequest.getPhoneNumber());
         userJpa.save(user);
         MyPageUserDetailResponse myPageUserDetailResponse=MyPageUserDetailResponse.builder()
