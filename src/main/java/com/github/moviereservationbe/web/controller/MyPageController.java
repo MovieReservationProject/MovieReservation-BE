@@ -51,12 +51,12 @@ public class MyPageController {
     public ResponseDto ReviewList(@AuthenticationPrincipal CustomUserDetails customUserDetails,Pageable pageable)
     {return myPageService.findAllReviews(customUserDetails,pageable);}
 
-    @PutMapping("/review/update/{reviewId}")
-    public ResponseDto UpdateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,@RequestBody ReviewRequest reviewRequest,@PathVariable("reviewId") Integer reviewId)
+    @PutMapping("/review/update/{movieId}")
+    public ResponseDto UpdateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ReviewRequest reviewRequest, @PathVariable("reviewId") Integer reviewId, @PathVariable String movieId)
     {return myPageService.updateReview(customUserDetails,reviewRequest,reviewId);}
 
-    @DeleteMapping("/review/delete/{reviewId}")
-    public ResponseDto deleteReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("reviewId") Integer reviewId) {
+    @DeleteMapping("/review/delete/{movieId}")
+    public ResponseDto deleteReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("reviewId") Integer reviewId, @PathVariable String movieId) {
         try {
             return myPageService.deleteReview(customUserDetails, reviewId);
         } catch (NotFoundException e) {
