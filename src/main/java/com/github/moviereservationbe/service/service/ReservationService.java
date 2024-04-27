@@ -204,6 +204,8 @@ public class ReservationService {
         long minuteDifference = (startTimestamp - currentTimestamp) / (1000*60);
         if (minuteDifference >= 10){
             reservationJpa.deleteById(reservationId);
+            findSchedule.setRemainingSeats(findSchedule.getRemainingSeats() + 1);
+            scheduleJpa.save(findSchedule);
             return new ResponseDto(HttpStatus.OK.value(), "예약 취소 완료 되었습니다.");
         } else{
             return new ResponseDto(HttpStatus.BAD_REQUEST.value(), "상영 시간 10분 전이라 취소가 불가능합니다.");
