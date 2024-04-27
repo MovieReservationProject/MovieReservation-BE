@@ -23,6 +23,7 @@ import com.github.moviereservationbe.web.DTO.reservationDto.ReservationChange;
 import com.github.moviereservationbe.web.DTO.reservationDto.ScheduleResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,6 +67,7 @@ public class ReservationService {
 
     }
     @Transactional
+    @CacheEvict(value = "reservation",allEntries = true)
     public ResponseDto ticketReservationResult(CustomUserDetails customUserDetails, ReservationRequest reservationRequest) {
         Integer userId = customUserDetails.getUserId();
         String movieName=reservationRequest.getMovieName();
@@ -140,6 +142,7 @@ public class ReservationService {
     }
 
     @Transactional
+    @CacheEvict(value = "reservation",allEntries = true)
     public ResponseDto changeTicketResult(CustomUserDetails customUserDetails, Integer reservationId, ReservationChange reservationChange) {
 
         Integer userId = customUserDetails.getUserId();
