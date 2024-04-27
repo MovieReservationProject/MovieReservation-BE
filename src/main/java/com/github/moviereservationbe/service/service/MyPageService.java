@@ -5,6 +5,7 @@ import com.github.moviereservationbe.repository.Auth.user.UserJpa;
 import com.github.moviereservationbe.repository.Auth.userDetails.CustomUserDetails;
 import com.github.moviereservationbe.repository.MainPage.movie.Movie;
 import com.github.moviereservationbe.repository.MainPage.movie.MovieJpa;
+import com.github.moviereservationbe.repository.ReservationPage.cinema.CinemaJpa;
 import com.github.moviereservationbe.repository.ReservationPage.reservation.Reservation;
 import com.github.moviereservationbe.repository.ReservationPage.reservation.ReservationJpa;
 import com.github.moviereservationbe.repository.review.Review;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 @Service
 public class MyPageService {
     private final ReservationJpa reservationJpa;
+    private final CinemaJpa cinemaJpa;
     private final MovieJpa movieJpa;
     private final ReviewJpa reviewJpa;
     private final UserJpa userJpa;
@@ -97,15 +99,14 @@ public class MyPageService {
         int userId = userJpa.findById(customUserDetails.getUserId()).map(User::getUserId)
                 .orElseThrow(() -> new NotFoundException("아이디를 찾을 수 없습니다."));
 
+
         Page<Review> reviews = reviewJpa.findAllByUserId(userId,pageable);
         if(reviews.isEmpty()){throw new NotFoundException("예매 정보를 찾을 수 없습니다.");}
 
         List<ReviewResponse> reviewResponses = reviews.stream()
                 .map(review -> ReviewResponse.builder()
                         .reviewId(review.getReviewId())
-                        .titleKorean(review.getMovie().getTitleKorean())
-//                        .cinemaName()
-                        .score(review.getScore())
+                        .titleKorean(review.getMovie().getTitleKorean()) //한국어 제목 추가
                         .content(review.getContent())
                         .reviewDate(review.getReviewDate()) // 리뷰 작성 날짜 추가
                         .build())
@@ -140,6 +141,7 @@ public class MyPageService {
 
         ReviewResponse response = ReviewResponse.builder()
                 .reviewId(savedReview.getReviewId())
+                .titleKorean(review.getMovie().getTitleKorean()) //한국어 제목 추가
                 .score(score)
                 .content(content)
                 .reviewDate(savedReview.getReviewDate())
@@ -173,6 +175,7 @@ public class MyPageService {
 
         ReviewResponse response = ReviewResponse.builder()
                 .reviewId(updateReview.getReviewId())
+                .titleKorean(review.getMovie().getTitleKorean()) //한국어 제목 추가
                 .score(updateReview.getScore())
                 .content(updateReview.getContent())
                 .reviewDate(updateReview.getReviewDate().atZone(ZoneId.systemDefault()).toLocalDateTime()) // LocalDateTime 으로 변환
