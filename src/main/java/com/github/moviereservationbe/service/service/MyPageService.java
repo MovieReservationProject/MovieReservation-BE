@@ -99,11 +99,13 @@ public class MyPageService {
                         .reviewId(review.getReviewId())
                         .score(review.getScore())
                         .content(review.getContent())
+                        .reviewDate(review.getReviewDate()) // 리뷰 작성 날짜 추가
                         .build())
                 .collect(Collectors.toList());
 
         return new ResponseDto(HttpStatus.OK.value(), "", reviewResponses);
     }
+
     //리뷰 작성
     public ResponseDto AddReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest) throws ReviewAlreadyExistsException {
         Integer userId = customUserDetails.getUserId();
@@ -132,20 +134,20 @@ public class MyPageService {
 
         Review savedReview = reviewJpa.save(review);
 
-        ReviewResponse.builder()
+        ReviewResponse response = ReviewResponse.builder()
                 .reviewId(savedReview.getReviewId())
                 .score(score)
                 .content(content)
                 .reviewDate(savedReview.getReviewDate())
                 .build();
-        return new ResponseDto(HttpStatus.OK.value(),"리뷰가 저장되었습니다.");
+        return new ResponseDto(HttpStatus.OK.value(), "리뷰가 저장되었습니다.", response);
     }
 
     //리뷰 수정
     public ResponseDto updateReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest) {
         Integer userId = customUserDetails.getUserId();
-        Movie movie=movieJpa.findById(customUserDetails.getUserId()).orElseThrow(()->new NotFoundException("영화를 찾을 수 없습니다."));
-        Integer movieId=movie.getMovieId();
+        Movie movie = movieJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("영화를 찾을 수 없습니다."));
+        Integer movieId = movie.getMovieId();
         Integer score = reviewRequest.getScore(); // 수정할 평점
         String content = reviewRequest.getContent();
 
@@ -165,14 +167,15 @@ public class MyPageService {
 
         Review updateReview = reviewJpa.save(review);
 
-        ReviewResponse.builder()
+        ReviewResponse response = ReviewResponse.builder()
                 .reviewId(updateReview.getReviewId())
                 .score(updateReview.getScore())
                 .content(updateReview.getContent())
                 .reviewDate(updateReview.getReviewDate().atZone(ZoneId.systemDefault()).toLocalDateTime()) // LocalDateTime 으로 변환
                 .build();
-        return new ResponseDto(HttpStatus.OK.value(),"리뷰가 수정되었습니다.");
+        return new ResponseDto(HttpStatus.OK.value(), "리뷰가 수정되었습니다.", response);
     }
+
 
     //리뷰 삭제
     public ResponseDto deleteReview(CustomUserDetails customUserDetails, Integer reviewId) {
