@@ -70,8 +70,7 @@ public class MainPageService {
     public ResponseDto findMovieDetail(String titleKorean) {
         Movie movie= movieJpa.findByTitleKorean(titleKorean)
                 .orElseThrow(()-> new NotFoundException("Cannot find movie with title: " + titleKorean));
-//        Movie movie= movieJpa.findByTitleEnglish(titleKorean)
-//                .orElseThrow(()-> new NotFoundException("Cannot find movie with title: " + titleKorean));
+
         //ticket sales
         List<Schedule> scheduleList= movie.getScheduleList().stream().toList();
         double ticketSales= caculateTicketSales(scheduleList);

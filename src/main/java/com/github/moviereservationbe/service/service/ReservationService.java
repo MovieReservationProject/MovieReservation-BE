@@ -137,8 +137,9 @@ public class ReservationService {
     public ResponseDto update(CustomUserDetails customUserDetails, ReservationUpdateDto reservationUpdateDto) {
         User user= userJpa.findByMyIdFetchJoin(customUserDetails.getMyId())
                 .orElseThrow(()-> new NotFoundException("Cannot find user with ID: "+ customUserDetails.getMyId()));
-        Reservation reservation= reservationJpa.findByReserveNum(reservationUpdateDto.getReserveNum())
-                .orElseThrow(()-> new NotFoundException("Cannot find reservation with reserve num: "+ reservationUpdateDto.getReserveNum()));
+        Reservation reservation= reservationJpa.findByReserveNumAndUser(reservationUpdateDto.getReserveNum(), user)
+                .orElseThrow(()-> new NotFoundException("Cannot find reservation with reserve num and User: "+ reservationUpdateDto.getReserveNum()));
+
         //find schedule in reservation
         Schedule beforeSchedule= reservation.getSchedule();
         //⭐️if movie start time in schedule is before now, reservation cannot be changed
@@ -189,8 +190,8 @@ public class ReservationService {
     public ResponseDto delete(CustomUserDetails customUserDetails, String reserveNum) {
         User user= userJpa.findByMyIdFetchJoin(customUserDetails.getMyId())
                 .orElseThrow(()-> new NotFoundException("Cannot find user with ID: "+ customUserDetails.getMyId()));
-        Reservation reservation= reservationJpa.findByReserveNum(reserveNum)
-                .orElseThrow(()-> new NotFoundException("Cannot find reservation with reserve num: "+ reserveNum));
+        Reservation reservation= reservationJpa.findByReserveNumAndUser(reserveNum, user)
+                .orElseThrow(()-> new NotFoundException("Cannot find reservation with reserve num and User: "+ reserveNum));
         Schedule schedule= reservation.getSchedule();
         if(schedule.getStartTime().isBefore(LocalDateTime.now())) throw new ExpiredException("This reservation is expired");
         try{

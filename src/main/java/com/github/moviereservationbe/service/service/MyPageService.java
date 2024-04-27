@@ -10,6 +10,7 @@ import com.github.moviereservationbe.repository.ReservationPage.reservation.Rese
 import com.github.moviereservationbe.repository.review.Review;
 import com.github.moviereservationbe.repository.review.ReviewJpa;
 import com.github.moviereservationbe.service.exceptions.BadRequestException;
+import com.github.moviereservationbe.service.exceptions.NotAuthorizedException;
 import com.github.moviereservationbe.service.exceptions.NotFoundException;
 import com.github.moviereservationbe.web.DTO.ResponseDto;
 import com.github.moviereservationbe.web.DTO.myPage.ReviewDto;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -124,8 +126,12 @@ public class MyPageService {
     public ResponseDto updateMyReview(CustomUserDetails customUserDetails, Integer reviewId, ReviewDto reviewDto) {
         User user= userJpa.findByMyIdFetchJoin(customUserDetails.getMyId())
                 .orElseThrow(()-> new NotFoundException("Cannot find user with myId: "+ customUserDetails.getMyId()));
-        Review review= reviewJpa.findByReviewIdAndUser(reviewId, user) //이로써 내가 쓴 리뷰만 불러오게 된다.
-                .orElseThrow(()-> new NotFoundException("Cannot find review with Id and User: "+ reviewId));
+        List<Review> userReviews= reviewJpa.findByUser(user); //이로써 내가 쓴 리뷰만 불러오게 된다.
+        if(userReviews.isEmpty()) throw new NotFoundException("User has no reviews");
+
+        Optional<Review> existingReview = userReviews.stream().filter(r-> r.getReviewId().equals(reviewId)).findFirst(); //?
+        Review review= existingReview.get();
+
         review.setScore(reviewDto.getScore());
         review.setContent(reviewDto.getContent());
         reviewJpa.save(review);
@@ -144,9 +150,13 @@ public class MyPageService {
     public ResponseDto deleteMyReview(CustomUserDetails customUserDetails, Integer reviewId) {
         User user= userJpa.findByMyIdFetchJoin(customUserDetails.getMyId())
                 .orElseThrow(()-> new NotFoundException("Cannot find user with myId: "+ customUserDetails.getMyId()));
-        Review review= reviewJpa.findByReviewIdAndUser(reviewId, user) //이로써 내가 쓴 리뷰만 불러오게 된다.
+        Review review= reviewJpa.findById(reviewId)
                 .orElseThrow(()-> new NotFoundException("Cannot find review with Id and User: "+ reviewId));
-        reviewJpa.delete(review);
-        return new ResponseDto(HttpStatus.OK.value(), "Review delete success");
+        if(review.getUser().equals(user)) {
+            reviewJpa.delete(review);
+            return new ResponseDto(HttpStatus.OK.value(), "Review delete success");
+        } else{
+            throw new NotAuthorizedException("You do not have the authorization. You did not register this review");
+        }
     }
 }
