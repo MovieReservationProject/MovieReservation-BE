@@ -52,13 +52,13 @@ public class MyPageController {
     {return myPageService.findAllReviews(customUserDetails,pageable);}
 
     @PutMapping("/review/update/{movieId}")
-    public ResponseDto UpdateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ReviewRequest reviewRequest, @PathVariable("reviewId") Integer reviewId, @PathVariable String movieId)
-    {return myPageService.updateReview(customUserDetails,reviewRequest,reviewId);}
+    public ResponseDto UpdateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ReviewRequest reviewRequest, @PathVariable("movieId") Integer movieId)
+    {return myPageService.updateReview(customUserDetails, reviewRequest, movieId);}
 
     @DeleteMapping("/review/delete/{movieId}")
-    public ResponseDto deleteReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("reviewId") Integer reviewId, @PathVariable String movieId) {
+    public ResponseDto deleteReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("movieId") Integer movieId) {
         try {
-            return myPageService.deleteReview(customUserDetails, reviewId);
+            return myPageService.deleteReview(customUserDetails, movieId);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
