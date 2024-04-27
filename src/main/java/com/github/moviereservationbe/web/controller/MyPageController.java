@@ -43,7 +43,7 @@ public class MyPageController {
         try {
             return myPageService.AddReview(customUserDetails,reviewRequest,movieid);
         } catch (ReviewAlreadyExistsException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 작성된 리뷰입니다");
         }
     }
 
@@ -51,9 +51,9 @@ public class MyPageController {
     public ResponseDto ReviewList(@AuthenticationPrincipal CustomUserDetails customUserDetails,Pageable pageable)
     {return myPageService.findAllReviews(customUserDetails,pageable);}
 
-    @PutMapping("/review/update")
-    public ResponseDto UpdateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,@RequestBody ReviewRequest reviewRequest)
-    {return myPageService.updateReview(customUserDetails,reviewRequest);}
+    @PutMapping("/review/update/{reviewId}")
+    public ResponseDto UpdateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,@RequestBody ReviewRequest reviewRequest,@PathVariable("reviewId") Integer reviewId)
+    {return myPageService.updateReview(customUserDetails,reviewRequest,reviewId);}
 
     @DeleteMapping("/review/delete/{reviewId}")
     public ResponseDto deleteReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("reviewId") Integer reviewId) {

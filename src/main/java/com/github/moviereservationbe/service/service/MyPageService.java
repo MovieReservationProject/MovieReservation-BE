@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -150,10 +149,8 @@ public class MyPageService {
     }
 
     //리뷰 수정
-    public ResponseDto updateReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest) {
+    public ResponseDto updateReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest, Integer reviewId) {
         Integer userId = customUserDetails.getUserId();
-        Movie movie = movieJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("영화를 찾을 수 없습니다."));
-        Integer movieId = movie.getMovieId();
         Integer score = reviewRequest.getScore(); // 수정할 평점
         String content = reviewRequest.getContent();
 
@@ -161,7 +158,7 @@ public class MyPageService {
             throw new IllegalArgumentException("평점은 0부터 10까지 가능합니다.");
         }
 
-        Optional<Review> existingReview = reviewJpa.findByUserIdAndMovieId(userId, movieId);
+        Optional<Review> existingReview = reviewJpa.findById(reviewId);
         if (existingReview.isEmpty()) {
             throw new NotFoundException("리뷰를 찾을 수 없습니다.");
         }
