@@ -116,31 +116,34 @@ public class MyPageService {
 
     //리뷰 작성
     public ResponseDto AddReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest,int movieId) throws ReviewAlreadyExistsException {
-
-        if(reviewJpa.findByMovieId(movieId).isEmpty()){throw new ReviewAlreadyExistsException("이미 리뷰를 작성하였습니다.");};
-
+        // 사용자 정보 확인
         Integer userId = customUserDetails.getUserId();
-        movieJpa.findById(movieId).orElseThrow(()->new NotFoundException("영화를 찾을 수 없습니다."));
+
+        // 해당 영화에 대한 리뷰가 이미 존재하는지 확인
+        if(reviewJpa.findByMovieId(movieId).isEmpty()){throw new ReviewAlreadyExistsException("이미 리뷰를 작성하였습니다.");}
+
+        Movie movie = movieJpa.findById(movieId).orElseThrow(() -> new NotFoundException("영화를 찾을 수 없습니다."));
+
         Integer score = reviewRequest.getScore();
         String content = reviewRequest.getContent();
 
         if (score < 0 || score > 10) {
-            throw new IllegalArgumentException("평점은 0부터 10까지 가능합니다.");  // 별점을 1부터 10까지 매길 수 있게 할 예정
-        }                                                                      // 해당 에러는 나지 않을 것 같지만, 의도치 않게 1~10이 아닌 값이 들어올 가능성도 있음
+            throw new IllegalArgumentException("평점은 0부터 10까지 가능합니다.");
+        }                                                             // 해당 에러는 나지 않을 것 같지만, 의도치 않게 1~10이 아닌 값이 들어올 가능성도 있음
 
         Review review = Review.builder()
-                .user(User.builder().userId(userId).build())  // 사용자 ID 설정
-                .movie(Movie.builder().movieId(movieId).build())  // 영화 ID 설정
+                .user(User.builder().userId(userId).build())
+                .movie(movie)  // 가져온 영화 정보를 사용
                 .score(score)
                 .content(content)
-                .reviewDate(LocalDateTime.now()) // 현재 시간으로 설정
+                .reviewDate(LocalDateTime.now())
                 .build();
 
         Review savedReview = reviewJpa.save(review);
 
         ReviewResponse response = ReviewResponse.builder()
                 .reviewId(savedReview.getReviewId())
-                .titleKorean(review.getMovie().getTitleKorean()) //한국어 제목 추가
+                .titleKorean(movie.getTitleKorean()) // 영화 정보를 사용
                 .score(score)
                 .content(content)
                 .reviewDate(savedReview.getReviewDate())
@@ -149,7 +152,7 @@ public class MyPageService {
     }
 
     //리뷰 수정
-    public ResponseDto updateReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest, Integer reviewId) {
+    public ResponseDto updateReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest, Integer movieId) {
         Integer userId = customUserDetails.getUserId();
         Integer score = reviewRequest.getScore(); // 수정할 평점
         String content = reviewRequest.getContent();
@@ -158,11 +161,13 @@ public class MyPageService {
             throw new IllegalArgumentException("평점은 0부터 10까지 가능합니다.");
         }
 
-        Optional<Review> existingReview = reviewJpa.findById(reviewId);
+        // 해당 영화에 대한 사용자의 리뷰를 찾음
+        Optional<Review> existingReview = reviewJpa.findByUserIdAndMovieId(userId, movieId);
         if (existingReview.isEmpty()) {
-            throw new NotFoundException("리뷰를 찾을 수 없습니다.");
+            throw new NotFoundException("해당 영화에 대한 리뷰를 찾을 수 없습니다.");
         }
 
+        // 리뷰가 여러 개일 경우 가장 최근의 리뷰를 선택하여 수정
         Review review = existingReview.get();
         review.setScore(score);
         review.setContent(content);
@@ -179,7 +184,6 @@ public class MyPageService {
                 .build();
         return new ResponseDto(HttpStatus.OK.value(), "리뷰가 수정되었습니다.", response);
     }
-
 
     //리뷰 삭제
     public ResponseDto deleteReview(CustomUserDetails customUserDetails, Integer reviewId) {
