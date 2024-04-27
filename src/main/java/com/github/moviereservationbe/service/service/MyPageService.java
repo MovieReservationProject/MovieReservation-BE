@@ -122,7 +122,9 @@ public class MyPageService {
         Integer userId = customUserDetails.getUserId();
 
         // 해당 영화에 대한 리뷰가 이미 존재하는지 확인
-        if(reviewJpa.findByMovieId(movieId).isEmpty()){throw new ReviewAlreadyExistsException("이미 리뷰를 작성하였습니다.");}
+        if (reviewJpa.findByMovieId(movieId).isPresent()) {
+            throw new ReviewAlreadyExistsException("이미 리뷰를 작성하였습니다.");
+        }
 
         Movie movie = movieJpa.findById(movieId).orElseThrow(() -> new NotFoundException("영화를 찾을 수 없습니다."));
 
