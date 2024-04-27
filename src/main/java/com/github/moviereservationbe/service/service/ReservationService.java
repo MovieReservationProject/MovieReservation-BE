@@ -27,11 +27,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -193,16 +190,23 @@ public class ReservationService {
         Reservation reservation = reservationJpa.findByReserveIdAndUser(reservationId,user)
                 .orElseThrow(()-> new NotFoundException("예약 내역이 없습니다."));
         Schedule findSchedule =reservation.getSchedule();
-        LocalDateTime startTime = findSchedule.getStartTime();
+        LocalDateTime startTime = findSchedule.getStartTime();//상영 날짜시간
+        LocalDateTime currentDateTime = LocalDateTime.now();//현재 날짜시간
 
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        long minuteDifference = ChronoUnit.MINUTES.between(startTime, currentDateTime);
+        //상영 날짜시간과 현재 날짜시간 타임스탬프로 변환
+        long startTimestamp = startTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+        System.out.println(startTimestamp);
 
-        if (minuteDifference < 10){
-            return new ResponseDto(HttpStatus.BAD_REQUEST.value(), "상영 시간 10분 전이라 취소가 불가능합니다.");
-        } else{
+        long currentTimestamp = currentDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+        System.out.println(currentTimestamp);
+        //변환한 두 날짜시간를 분으로 변환하여 시간 차이 계산
+        long minuteDifference = (startTimestamp - currentTimestamp) / (1000*60);
+        System.out.println(minuteDifference);
+        if (minuteDifference >= 10){
             reservationJpa.deleteById(reservationId);
             return new ResponseDto(HttpStatus.OK.value(), "예약 취소 완료 되었습니다.");
+        } else{
+            return new ResponseDto(HttpStatus.BAD_REQUEST.value(), "상영 시간 10분 전이라 취소가 불가능합니다.");
         }
     }
 }
