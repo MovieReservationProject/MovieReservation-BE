@@ -40,17 +40,5 @@ public class ExceptionControllerAdvice {
         log.error("Sold Out Exception: "+ soe.getMessage());
         return soe.getMessage();
     }
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ExpiredException.class)
-    public String handlerExpiredException(ExpiredException ee){
-        log.error("Expired Exception : "+ ee.getMessage());
-        return ee.getMessage();
-    }
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(AgeRestrictionException.class)
-    public String handlerAgeRestrictionException(AgeRestrictionException are){
-        log.error("Expired Exception : "+ are.getMessage());
-        return are.getMessage();
-    }
 
 }

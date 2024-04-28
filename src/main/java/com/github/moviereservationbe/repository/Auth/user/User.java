@@ -2,6 +2,7 @@ package com.github.moviereservationbe.repository.Auth.user;
 import com.github.moviereservationbe.repository.Auth.userRole.UserRole;
 import com.github.moviereservationbe.repository.ReservationPage.reservation.Reservation;
 import com.github.moviereservationbe.repository.review.Review;
+import com.github.moviereservationbe.web.DTO.MyPage.MyPageUserDetailRequest;
 import jakarta.persistence.*;
 import lombok.*;
 

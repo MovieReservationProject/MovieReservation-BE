@@ -20,4 +20,5 @@ public interface UserJpa extends JpaRepository<User, Integer> {
     Optional<User> findByMyIdFetchJoin(String myId);
 
     boolean existsByMyId(String myId);
+
 }

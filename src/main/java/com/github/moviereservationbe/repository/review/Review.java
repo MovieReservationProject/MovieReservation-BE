@@ -5,6 +5,7 @@ import com.github.moviereservationbe.repository.MainPage.movie.Movie;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -36,5 +37,6 @@ public class Review {
         private String content;
 
         @Column(name = "review_date", nullable = false)
-        private Date reviewDate;
+        private LocalDateTime reviewDate;
+
 }
