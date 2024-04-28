@@ -36,10 +36,10 @@ public class Movie {
     private Date releaseDate;
 
     @Column(name = "ticket_sales", nullable = false)
-    private Integer ticketSales;
+    private double ticketSales;
 
     @Column(name = "score_avg", nullable = false)
-    private Integer scoreAvg;
+    private double scoreAvg;
 
     @Column(name = "age_limit", nullable = false)
     private Integer ageLimit;

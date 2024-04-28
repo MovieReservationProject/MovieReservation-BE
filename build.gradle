@@ -61,6 +61,9 @@ dependencies {
     // Add the spring-boot-configuration-processor dependency for annotation processing
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
+    // Cache
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+
 }
 
 tasks.named('test') {
