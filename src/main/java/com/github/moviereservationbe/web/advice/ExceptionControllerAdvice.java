@@ -53,4 +53,10 @@ public class ExceptionControllerAdvice {
         return are.getMessage();
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ReviewAlreadyExistsException.class)
+    public String handlerReviewAlreadyExistsException(ReviewAlreadyExistsException raee){
+        log.error("Expired Exception : "+ raee.getMessage());
+        return raee.getMessage();
+    }
 }

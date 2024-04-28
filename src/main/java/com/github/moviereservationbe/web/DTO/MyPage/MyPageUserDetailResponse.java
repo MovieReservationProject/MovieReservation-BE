@@ -14,5 +14,5 @@ public class MyPageUserDetailResponse {
     private String myId;
     private Date birthday;
     private String phoneNumber;
-    private String password;
+//    private String password;
 }

@@ -1,8 +1,10 @@
 package com.github.moviereservationbe.web.DTO.MyPage;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.regex.Pattern;
 
 @Getter
 @Setter
@@ -16,5 +18,6 @@ public class ReviewResponse {
     private LocalDateTime reserveTime;
     private Integer score;
     private String content;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime reviewDate;
 }

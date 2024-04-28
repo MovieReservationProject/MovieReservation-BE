@@ -5,7 +5,6 @@ import com.github.moviereservationbe.repository.Auth.user.UserJpa;
 import com.github.moviereservationbe.repository.Auth.userDetails.CustomUserDetails;
 import com.github.moviereservationbe.repository.MainPage.movie.Movie;
 import com.github.moviereservationbe.repository.MainPage.movie.MovieJpa;
-import com.github.moviereservationbe.repository.ReservationPage.cinema.CinemaJpa;
 import com.github.moviereservationbe.repository.ReservationPage.reservation.Reservation;
 import com.github.moviereservationbe.repository.ReservationPage.reservation.ReservationJpa;
 import com.github.moviereservationbe.repository.review.Review;
@@ -33,7 +32,6 @@ import java.util.stream.Collectors;
 @Service
 public class MyPageService {
     private final ReservationJpa reservationJpa;
-    private final CinemaJpa cinemaJpa;
     private final MovieJpa movieJpa;
     private final ReviewJpa reviewJpa;
     private final UserJpa userJpa;
@@ -41,11 +39,13 @@ public class MyPageService {
 
     public ResponseDto findAllReservation(CustomUserDetails customUserDetails, Pageable pageable) {
         int userId = userJpa.findById(customUserDetails.getUserId()).map(User::getUserId)
-                                .orElseThrow(() -> new NotFoundException("아이디를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException("아이디를 찾을 수 없습니다."));
 
         // 예약 정보를 페이지로 조회
-        Page<Reservation> reservationPage = reservationJpa.findAllByUserId(userId,pageable);
-        if(reservationPage.isEmpty()){throw new NotFoundException("예매 정보를 찾을 수 없습니다.");}
+        Page<Reservation> reservationPage = reservationJpa.findAllByUserId(userId, pageable);
+        if (reservationPage.isEmpty()) {
+            throw new NotFoundException("예매 정보를 찾을 수 없습니다.");
+        }
 
         // 예약 정보를 DTO로 변환
         Page<MyPageReservationResponse> responsePage = reservationPage.map(reservation -> MyPageReservationResponse.builder()
@@ -65,34 +65,38 @@ public class MyPageService {
     //유저정보 조회
     public ResponseDto findUserDetail(CustomUserDetails customUserDetails) {
         User user = userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
-        MyPageUserDetailResponse myPageUserDetailResponse=MyPageUserDetailResponse.builder()
+        MyPageUserDetailResponse myPageUserDetailResponse = MyPageUserDetailResponse.builder()
                 .name(user.getName())
                 .myId(user.getMyId())
                 .birthday(user.getBirthday())
                 .phoneNumber(user.getPhoneNumber())
-                .password(user.getPassword())
+//                .password(user.getPassword())
                 .build();
-        return new ResponseDto(HttpStatus.OK.value(),"",myPageUserDetailResponse);
+        return new ResponseDto(HttpStatus.OK.value(), "", myPageUserDetailResponse);
     }
 
     //유저정보 변경
     public ResponseDto updateUserDetail(CustomUserDetails customUserDetails, MyPageUserDetailRequest myPageUserDetailRequest) {
         User user = userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
-        String newPassword=myPageUserDetailRequest.getPassword();
-        if(newPassword.isEmpty()){throw new NotFoundException("새 비밀번호를 입력해주세요");}
+        String newPassword = myPageUserDetailRequest.getPassword();
+        if (newPassword.isEmpty()) {
+            throw new NotFoundException("새 비밀번호를 입력해주세요");
+        }
         String hashedPassword = passwordEncoder.encode(newPassword);
         user.setPassword(hashedPassword);
-        if(myPageUserDetailRequest.getPhoneNumber().isEmpty()){throw new NotFoundException("새 전화번호를 입력해주세요");}
+        if (myPageUserDetailRequest.getPhoneNumber().isEmpty()) {
+            throw new NotFoundException("새 전화번호를 입력해주세요");
+        }
         user.setPhoneNumber(myPageUserDetailRequest.getPhoneNumber());
         userJpa.save(user);
-        MyPageUserDetailResponse myPageUserDetailResponse=MyPageUserDetailResponse.builder()
+        MyPageUserDetailResponse myPageUserDetailResponse = MyPageUserDetailResponse.builder()
                 .name(user.getName())
                 .myId(user.getMyId())
                 .birthday(user.getBirthday())
                 .phoneNumber(user.getPhoneNumber())
-                .password(hashedPassword)
+//                .password(hashedPassword)
                 .build();
-        return new ResponseDto(HttpStatus.OK.value(),"user detail updated successful",myPageUserDetailResponse);
+        return new ResponseDto(HttpStatus.OK.value(), "user detail updated successful", myPageUserDetailResponse);
     }
 
     //리뷰 조회
@@ -101,8 +105,10 @@ public class MyPageService {
                 .orElseThrow(() -> new NotFoundException("아이디를 찾을 수 없습니다."));
 
 
-        Page<Review> reviews = reviewJpa.findAllByUserId(userId,pageable);
-        if(reviews.isEmpty()){throw new NotFoundException("예매 정보를 찾을 수 없습니다.");}
+        Page<Review> reviews = reviewJpa.findAllByUserId(userId, pageable);
+        if (reviews.isEmpty()) {
+            throw new NotFoundException("예매 정보를 찾을 수 없습니다.");
+        }
 
         List<ReviewResponse> reviewResponses = reviews.stream()
                 .map(review -> ReviewResponse.builder()
@@ -117,7 +123,7 @@ public class MyPageService {
     }
 
     //리뷰 작성
-    public ResponseDto addReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest,int movieId) throws ReviewAlreadyExistsException {
+    public ResponseDto addReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest, int movieId) throws ReviewAlreadyExistsException {
         // 사용자 정보 확인
         Integer userId = customUserDetails.getUserId();
 
@@ -190,18 +196,18 @@ public class MyPageService {
     }
 
     //리뷰 삭제
-    public ResponseDto deleteReview(CustomUserDetails customUserDetails, Integer reviewId) {
-        Optional<Review> reviewOptional = reviewJpa.findById(reviewId);
-        if (reviewOptional.isPresent()) {
-            Review review = reviewOptional.get();
-            if (customUserDetails != null && !review.getUser().getUserId().equals(customUserDetails.getUserId())) {
+    public ResponseDto deleteReview(CustomUserDetails customUserDetails, Integer movieId) {
+        Integer userId = customUserDetails.getUserId();
+        Optional<Review> existingReview = reviewJpa.findByUserIdAndMovieId(userId, movieId);
+        if (existingReview.isPresent()) {
+            Review review = existingReview.get();
+            if (!review.getUser().getUserId().equals(customUserDetails.getUserId())) {
                 throw new IllegalArgumentException("해당 리뷰를 삭제할 권한이 없습니다.");
             }
             reviewJpa.delete(review);
             return new ResponseDto("리뷰가 삭제되었습니다.");
         } else {
-            throw new NotFoundException("삭제할 리뷰를 찾을 수 없습니다.");
+            throw new NotFoundException("해당 영화에 대한 리뷰를 찾을 수 없습니다.");
         }
     }
 }
-
