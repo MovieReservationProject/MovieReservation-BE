@@ -63,7 +63,7 @@ public class MyPageService {
 
 
     //유저정보 조회
-    public ResponseDto UserDetail(CustomUserDetails customUserDetails) {
+    public ResponseDto findUserDetail(CustomUserDetails customUserDetails) {
         User user = userJpa.findById(customUserDetails.getUserId()).orElseThrow(() -> new NotFoundException("회원가입 후 이용해 주시길 바랍니다."));
         MyPageUserDetailResponse myPageUserDetailResponse=MyPageUserDetailResponse.builder()
                 .name(user.getName())
@@ -117,7 +117,7 @@ public class MyPageService {
     }
 
     //리뷰 작성
-    public ResponseDto AddReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest,int movieId) throws ReviewAlreadyExistsException {
+    public ResponseDto addReview(CustomUserDetails customUserDetails, ReviewRequest reviewRequest,int movieId) throws ReviewAlreadyExistsException {
         // 사용자 정보 확인
         Integer userId = customUserDetails.getUserId();
 

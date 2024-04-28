@@ -31,7 +31,7 @@ public class MyPageController {
 
     @GetMapping("/userInfo")
     public ResponseDto MyPageUserDetail(@AuthenticationPrincipal CustomUserDetails customUserDetails)
-    {return myPageService.UserDetail(customUserDetails);}
+    {return myPageService.findUserDetail(customUserDetails);}
 
     @PutMapping("/userInfo")
     public ResponseDto MyPageUserDetailUpdate(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody MyPageUserDetailRequest myPageUserDetailRequest)
@@ -40,7 +40,7 @@ public class MyPageController {
     @PostMapping("/review/add/{movieId}")
     public ResponseDto AddReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("movieId") int movieId, @RequestBody ReviewRequest reviewRequest) {
         try {
-            return myPageService.AddReview(customUserDetails, reviewRequest, movieId);
+            return myPageService.addReview(customUserDetails, reviewRequest, movieId);
         } catch (ReviewAlreadyExistsException e) {
             return new ResponseDto(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
         }
