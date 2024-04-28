@@ -2,14 +2,13 @@ package com.github.moviereservationbe.web.DTO.movie;
 
 import java.util.Date;
 import java.util.List;
-
-import com.github.moviereservationbe.repository.MainPage.actor.Actor;
-import com.github.moviereservationbe.repository.MainPage.movieActor.MovieActor;
 import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class MovieDetailResponseDto {
         private Integer movieId;
         private String titleKorean;
@@ -26,6 +25,9 @@ public class MovieDetailResponseDto {
         private String genre;
         private String status; //예매중, 현재상영중, 상영종료
         private String summary;
+
+        private List<ActorResponseDto> actorResponseDtoList;
+
         public MovieDetailResponseDto(Integer movieId, String titleKorean, String titleEnglish,
                                       String poster, Date releaseDate, Double ticketSales, Double scoreAvg,
                                       Integer dDay, Integer ageLimit, Integer screenTime, String country,

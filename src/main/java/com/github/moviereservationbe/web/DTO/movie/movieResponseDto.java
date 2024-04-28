@@ -21,13 +21,6 @@ public class movieResponseDto {
     private Double ticketSales;
     private Double scoreAvg;
     private Integer dDay;
-//    private Integer ageLimit;
-//    private Integer screenTime;
-//    private String country;
-//    private String director;
-//    private String genre;
-//    private String status; //예매중, 현재상영중, 상영종료
-//    private String summary;
 
     public movieResponseDto(Movie movie) {
         this.movieId = movie.getMovieId();

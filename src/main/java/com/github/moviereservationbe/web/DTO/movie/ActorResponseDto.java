@@ -1,14 +1,10 @@
 package com.github.moviereservationbe.web.DTO.movie;
 
-
-import com.github.moviereservationbe.repository.MainPage.movie.MovieJpa;
-import com.github.moviereservationbe.repository.MainPage.movieActor.MovieActor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter

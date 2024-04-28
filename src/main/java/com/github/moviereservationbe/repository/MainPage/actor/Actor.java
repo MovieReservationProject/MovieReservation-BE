@@ -1,6 +1,5 @@
 package com.github.moviereservationbe.repository.MainPage.actor;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 

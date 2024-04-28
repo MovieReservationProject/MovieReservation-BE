@@ -4,17 +4,14 @@ import com.github.moviereservationbe.repository.MainPage.movie.Movie;
 import com.github.moviereservationbe.repository.MainPage.movie.MovieJpa;
 import com.github.moviereservationbe.service.service.MovieService;
 import com.github.moviereservationbe.web.DTO.ResponseDto;
-import com.github.moviereservationbe.web.DTO.movie.MovieDetailResponseDto;
 import com.github.moviereservationbe.web.DTO.movie.movieResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
