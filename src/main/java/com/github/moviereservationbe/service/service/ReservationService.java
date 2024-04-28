@@ -249,7 +249,6 @@ public class ReservationService {
                     .movieTime(movieTimes)
                     .remainingSeats(s.getRemainingSeats())
                     .build();
-
             scheduleResponseDtoList.add(scheduleResponseDto);
         }
     return scheduleResponseDtoList;
