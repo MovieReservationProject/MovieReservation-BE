@@ -38,12 +38,11 @@ public class MyPageController {
     {return myPageService.updateUserDetail(customUserDetails,myPageUserDetailRequest);}
 
     @PostMapping("/review/add/{movieId}")
-    public ResponseDto AddReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("movieId") int movieid, @RequestBody ReviewRequest reviewRequest)
-    {
+    public ResponseDto AddReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("movieId") int movieId, @RequestBody ReviewRequest reviewRequest) {
         try {
-            return myPageService.AddReview(customUserDetails,reviewRequest,movieid);
+            return myPageService.AddReview(customUserDetails, reviewRequest, movieId);
         } catch (ReviewAlreadyExistsException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 작성된 리뷰입니다");
+            return new ResponseDto(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
         }
     }
 
