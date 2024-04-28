@@ -12,7 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
+@Repository
 public interface MovieJpa extends JpaRepository<Movie, Integer> {
     @Transactional
     @Modifying
@@ -57,6 +61,7 @@ public interface MovieJpa extends JpaRepository<Movie, Integer> {
 //    Optional<Actor> findByMovieIdFetchJoin(Integer movieId);
 //
 //    void findByMovieId(Integer movieId);
+    Optional<Movie> findByTitleKorean(String movieName);
 }
 
 

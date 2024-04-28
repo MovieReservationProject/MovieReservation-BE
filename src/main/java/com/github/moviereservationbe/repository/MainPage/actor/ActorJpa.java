@@ -1,10 +1,8 @@
 package com.github.moviereservationbe.repository.MainPage.actor;
 
-import com.github.moviereservationbe.repository.MainPage.movie.Movie;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
+@Repository
 public interface ActorJpa extends JpaRepository<Actor, Integer> {
-//    List<Actor> findAllByMovie(Movie movie);
 }
