@@ -1,11 +1,17 @@
 package com.github.moviereservationbe.repository.MainPage.movie;
 
+import com.github.moviereservationbe.repository.Auth.user.User;
+import com.github.moviereservationbe.repository.MainPage.actor.Actor;
+import com.github.moviereservationbe.repository.MainPage.movieActor.MovieActor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface MovieJpa extends JpaRepository<Movie, Integer> {
     @Transactional
@@ -39,4 +45,18 @@ public interface MovieJpa extends JpaRepository<Movie, Integer> {
                     "SET A.d_day = B.D_DAY "
     , nativeQuery = true)
     void updateD_Day();
+//    @Transactional
+//    @Modifying
+//    @Query(
+//            "SELECT b " +
+//                    "FROM Movie m " +
+//                    "JOIN FETCH m.movieActorList a " +
+//                    "JOIN FETCH a.actor b " +
+//                    "WHERE m.movieId = ?1 "
+//    )
+//    Optional<Actor> findByMovieIdFetchJoin(Integer movieId);
+//
+//    void findByMovieId(Integer movieId);
 }
+
+
