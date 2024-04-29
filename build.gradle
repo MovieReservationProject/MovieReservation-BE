@@ -9,9 +9,6 @@ tasks.withType(JavaCompile) {
     options.compilerArgs << "-parameters"
 }
 
-repositories {
-    jcenter()
-}
 
 group = 'com.github'
 version = '0.0.1-SNAPSHOT'
@@ -37,6 +34,9 @@ dependencies {
     //lombok사용
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    // Test Lombok
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
     //Mapstruct
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
@@ -48,6 +48,7 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     //JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.h2database:h2'
     //jwt
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     //security
@@ -63,6 +64,12 @@ dependencies {
 
     // Cache
     implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+    implementation 'io.springfox:springfox-swagger2:2.9.2'
 
 }
 
