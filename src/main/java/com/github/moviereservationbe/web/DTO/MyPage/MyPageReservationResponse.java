@@ -1,5 +1,6 @@
 package com.github.moviereservationbe.web.DTO.MyPage;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,5 +17,6 @@ public class MyPageReservationResponse {
     private String titleKorean;
     private String titleEnglish;
     private String cinemaName;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime reserveTime;
 }

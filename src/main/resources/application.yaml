@@ -13,7 +13,7 @@ spring:
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/Project_movie_reservation?useUnicode=true&characterEncoding=UTF-8
+    url: jdbc:mariadb://database-1.cn6ioosku2ij.ap-northeast-2.rds.amazonaws.com:3306/movie_project?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-
 
   jpa:
     show-sql: true
