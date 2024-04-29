@@ -5,3 +5,8 @@ spring:
 
 logging:
   config: classpath:logback-spring-prod.xml
+
+datasource:
+  driver-class-name: org.mariadb.jdbc.Driver
+  url: jdbc:mariadb://movie-database2.cn000owqib3s.ap-northeast-2.rds.amazonaws.com:3306/Project_movie_reservation?useUnicode=true&characterEncoding=UTF-8
+
