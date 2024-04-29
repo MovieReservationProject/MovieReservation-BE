@@ -14,8 +14,6 @@ import java.util.regex.Pattern;
 public class ReviewResponse {
     private Integer reviewId;
     private String titleKorean;
-    private String cinemaName;
-    private LocalDateTime reserveTime;
     private Integer score;
     private String content;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

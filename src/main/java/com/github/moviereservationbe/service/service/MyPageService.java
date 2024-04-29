@@ -115,6 +115,7 @@ public class MyPageService {
                         .reviewId(review.getReviewId())
                         .titleKorean(review.getMovie().getTitleKorean()) //한국어 제목 추가
                         .content(review.getContent())
+                        .score(review.getScore()) // 평점 추가
                         .reviewDate(review.getReviewDate()) // 리뷰 작성 날짜 추가
                         .build())
                 .collect(Collectors.toList());
@@ -127,10 +128,18 @@ public class MyPageService {
         // 사용자 정보 확인
         Integer userId = customUserDetails.getUserId();
 
+        // 예약 정보를 조회하여 해당 영화를 예약한 적이 있는지 확인
+        List<Reservation> reservations = reservationJpa.findByUserId(userId);
+        if (reservations.isEmpty()) {
+            throw new NotFoundException("예약한 영화만 리뷰를 작성할 수 있습니다.");
+        }
+
         // 해당 영화에 대한 리뷰가 이미 존재하는지 확인
-        if (reviewJpa.findByMovieId(movieId).isPresent()) {
+        Optional<Review> existingReview = reviewJpa.findByUserIdAndMovieId(userId, movieId);
+        if (existingReview.isPresent()) {
             throw new ReviewAlreadyExistsException("이미 리뷰를 작성하였습니다.");
         }
+
 
         Movie movie = movieJpa.findById(movieId).orElseThrow(() -> new NotFoundException("영화를 찾을 수 없습니다."));
 
