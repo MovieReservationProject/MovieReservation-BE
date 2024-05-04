@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -91,20 +92,31 @@ public class MyPageService {
         int score= reviewDto.getScore();
         if(score<0 || score>10) throw new BadRequestException("Score can only be from 1 to 10");
 
+
+        //내가 본 영화에 대해서만 리뷰 남길 수 있어야 한다.
+        Optional<Reservation> reservationList= reservationJpa.findByUserAndMovie(user, movie);
+        boolean hasReservation= reservationList.isEmpty();
+        boolean timePassedMovie= reservationList.stream().allMatch(reservation -> reservation.getSchedule().getStartTime().isAfter(LocalDateTime.now()));
+
         LocalDate reviewLocalDate= LocalDate.now();
         //two ways of changing local date => date
         Date reviewDate= Date.valueOf(reviewLocalDate); //Date is from java.sql.Date
         //Date reviewDate= java.sql.Date.valueOf(reviewLocalDate);  //Date is from java.util.Date
-        Review review= Review.builder()
-                .user(user)
-                .movie(movie)
-                .score(score)
-                .content(reviewDto.getContent())
-                .reviewDate(reviewDate) //date만 구하는 방법
-                .build();
-        reviewJpa.save(review);
+        if(!hasReservation && !timePassedMovie) {
+            Review review = Review.builder()
+                    .user(user)
+                    .movie(movie)
+                    .score(score)
+                    .content(reviewDto.getContent())
+                    .reviewDate(reviewDate) //date만 구하는 방법
+                    .build();
+            reviewJpa.save(review);
+            return new ResponseDto(HttpStatus.OK.value(), "Review add success");
 
-        return new ResponseDto(HttpStatus.OK.value(), "Review add success");
+        } else{
+            throw new NotAuthorizedException("You can add review for only movies you have watched");
+        }
+
     }
 
     public ResponseDto getMyReviews(CustomUserDetails customUserDetails) {
@@ -129,7 +141,8 @@ public class MyPageService {
         List<Review> userReviews= reviewJpa.findByUser(user); //이로써 내가 쓴 리뷰만 불러오게 된다.
         if(userReviews.isEmpty()) throw new NotFoundException("User has no reviews");
 
-        Optional<Review> existingReview = userReviews.stream().filter(r-> r.getReviewId().equals(reviewId)).findFirst(); //?
+        //내가 작성한 리뷰 중에서 리뷰 아이디로 찾아오기에 다른 사람이 작성한 리뷰를 수정할 일은 없다.
+        Optional<Review> existingReview = userReviews.stream().filter(r-> r.getReviewId().equals(reviewId)).findFirst();
         Review review= existingReview.get();
 
         review.setScore(reviewDto.getScore());

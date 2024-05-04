@@ -1,6 +1,7 @@
 package com.github.moviereservationbe.repository.ReservationPage.reservation;
 
 import com.github.moviereservationbe.repository.Auth.user.User;
+import com.github.moviereservationbe.repository.MainPage.movie.Movie;
 import org.checkerframework.checker.guieffect.qual.UI;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -34,4 +35,14 @@ public interface ReservationJpa extends JpaRepository<Reservation, Integer> {
                     "WHERE r.reserveNum= :reserveNum AND u= :user"
     )
     Optional<Reservation> findByReserveNumAndUser(String reserveNum, User user);
+
+    @Query(
+            "SELECT r " +
+                    "FROM Reservation r " +
+                    "JOIN r.user u " +
+                    "JOIN r.schedule s " +
+                    "JOIN s.movie m " +
+                    "WHERE u= :user AND m= :movie "
+    )
+    Optional<Reservation> findByUserAndMovie(User user, Movie movie);
 }

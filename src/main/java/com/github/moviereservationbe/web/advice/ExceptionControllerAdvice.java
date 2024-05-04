@@ -56,9 +56,9 @@ public class ExceptionControllerAdvice {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(AgeRestrictionException.class)
+    @ExceptionHandler(NotAuthorizedException.class)
     public String handleNotAuthorizedException(NotAuthorizedException nae){
-        log.error("Age Restriction Exception: "+ nae.getMessage());
+        log.error("Not Authorized Exception: "+ nae.getMessage());
         return nae.getMessage();
     }
 
