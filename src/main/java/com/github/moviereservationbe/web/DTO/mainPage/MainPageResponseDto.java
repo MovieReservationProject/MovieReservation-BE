@@ -34,7 +34,7 @@ public class MainPageResponseDto {
     public MainPageResponseDto(String moviePoster, String titleKorean, Double ticketSales, Date releaseDate, Double scoreAvg, Integer dDay) {
         this.moviePoster = moviePoster;
         this.titleKorean = titleKorean;
-        this.ticketSales = ticketSales;
+        this.ticketSales = Double.isNaN(ticketSales)? 100: ticketSales;
         this.releaseDate = releaseDate;
         this.scoreAvg = Double.isNaN(scoreAvg) ? 10: scoreAvg;
         this.dDay = dDay;

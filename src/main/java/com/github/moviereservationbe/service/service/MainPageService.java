@@ -10,6 +10,7 @@ import com.github.moviereservationbe.repository.ReservationPage.schedule.Schedul
 import com.github.moviereservationbe.repository.ReservationPage.schedule.ScheduleJpa;
 import com.github.moviereservationbe.repository.review.Review;
 import com.github.moviereservationbe.repository.review.ReviewJpa;
+import com.github.moviereservationbe.service.exceptions.BadRequestException;
 import com.github.moviereservationbe.service.exceptions.NotFoundException;
 import com.github.moviereservationbe.web.DTO.ResponseDto;
 import com.github.moviereservationbe.web.DTO.mainPage.ActorResponseDto;
@@ -17,13 +18,14 @@ import com.github.moviereservationbe.web.DTO.mainPage.MainPageResponseDto;
 import com.github.moviereservationbe.web.DTO.mainPage.MovieDetailResponseDto;
 import com.github.moviereservationbe.web.DTO.mainPage.ReviewResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,6 +53,7 @@ public class MainPageService {
             //save to movie
             movie.setTicketSales(ticketSales);
             movie.setScoreAvg(score);
+            movieJpa.save(movie);
         }
 
 
@@ -65,6 +68,66 @@ public class MainPageService {
                 ))
                 .toList();
         return new ResponseDto(HttpStatus.OK.value(), "Main page find success",mainPageResponseDtoList);
+    }
+
+    public ResponseDto findMainPageSort(Pageable pageable, String sort) {
+        ArrayList<String> sortArray= new ArrayList();
+        sortArray.add("ticket-sales");
+        sortArray.add( "reviews");
+
+        Page<Movie> moviePage= movieJpa.findAll(pageable);
+        for(Movie movie: moviePage){
+            //ticketSales
+            List<Schedule> scheduleList= movie.getScheduleList();
+            int remainingSeats= scheduleList.stream().mapToInt(Schedule::getRemainingSeats).sum();
+            int totalSeats= scheduleList.stream().map(Schedule::getCinemaType).map(CinemaType::getTotalSeats).mapToInt(Integer::intValue).sum();
+            if (totalSeats == 0) throw new NotFoundException("There are no total seats for this movie");
+            double ticketSales= ((double) (totalSeats- remainingSeats)/totalSeats)*100;
+            double formattedTicketSales= (double) Math.round(ticketSales*10.0)/10.0;
+
+
+            //scoreAvg
+            List<Review> reviewList= reviewJpa.findByMovieId(movie.getMovieId());
+            int scoreSum= reviewList.stream().map(Review::getScore).mapToInt(Integer::intValue).sum();
+            int countReview= reviewList.size();
+            if(countReview == 0 )throw new NotFoundException("There are no reviews for this movie");
+            double scoreAvg= (double) scoreSum / countReview;
+
+            movie.setTicketSales(formattedTicketSales);
+            movie.setScoreAvg(scoreAvg);
+            movieJpa.save(movie);
+        }
+        //sort
+        List<MainPageResponseDto> mainPageResponseDtoList = new ArrayList<>();
+        if(sort.equals("ticket-sales")){
+            mainPageResponseDtoList= moviePage.stream()
+                    .sorted(Comparator.comparingDouble(Movie::getTicketSales).reversed())
+                    .map(movie -> new MainPageResponseDto(
+                            movie.getPoster(),
+                            movie.getTitleKorean(),
+                            movie.getTicketSales(),
+                            movie.getReleaseDate(),
+                            movie.getScoreAvg(),
+                            movie.getDDay()
+                    ))
+                    .toList();
+        }else if(sort.equals("reviews")){
+            mainPageResponseDtoList= moviePage.stream()
+                    .sorted(Comparator.comparingDouble(Movie::getScoreAvg).reversed())
+                    .map(movie -> new MainPageResponseDto(
+                            movie.getPoster(),
+                            movie.getTitleKorean(),
+                            movie.getTicketSales(),
+                            movie.getReleaseDate(),
+                            movie.getScoreAvg(),
+                            movie.getDDay()
+                    ))
+                    .toList();
+        }else{
+            throw new BadRequestException("Invalid sort criteria: " + sort);
+        }
+        return new ResponseDto(HttpStatus.OK.value(), "Main page sort find success",mainPageResponseDtoList);
+
     }
 
     public ResponseDto findMovieDetail(String titleKorean) {
@@ -147,4 +210,6 @@ public class MainPageService {
         double formattedScoreAvg= Math.round(scoreAvg+10.0)/10.0;
         return scoreAvg;
     }
+
+
 }

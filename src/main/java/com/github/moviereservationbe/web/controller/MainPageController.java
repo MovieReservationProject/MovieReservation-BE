@@ -5,6 +5,7 @@ import com.github.moviereservationbe.service.service.MainPageService;
 import com.github.moviereservationbe.web.DTO.ResponseDto;
 import com.github.moviereservationbe.web.DTO.reservation.ReservationRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,12 @@ public class MainPageController {
     @GetMapping("/findAll")
     public ResponseDto findMainPage(){
         return mainPageService.findMainPage();
+    }
+
+    @GetMapping("/findBySort/{sort}")
+    public ResponseDto findMainPageSort(Pageable pageable,
+                                        @PathVariable String sort){
+        return mainPageService.findMainPageSort(pageable, sort);
     }
 
     @GetMapping("/findMovie/{titleKorean}")
