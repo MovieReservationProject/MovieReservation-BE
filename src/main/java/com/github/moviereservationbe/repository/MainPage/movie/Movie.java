@@ -65,11 +65,11 @@ public class Movie {
     @Column(name = "summary", nullable = false)
     private String summary;
 
-    //actor
+    //MovieActor
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MovieActor> movieActorList;
 
-    //schedule
+    //Schedule
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Schedule> scheduleList;
 }

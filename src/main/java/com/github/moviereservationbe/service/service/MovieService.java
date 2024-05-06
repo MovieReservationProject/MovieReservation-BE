@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,21 +25,31 @@ public class MovieService {
     private final MovieJpa movieJpa;
     private final ActorJpa actorJpa;
 
-    public Page<Movie> getMovies(int page, int size, String sort) {
-        //1. 리스트 조회하기 전에 평점, 예매율 계산해서 저장하기
-        // 예매율 = (1- remainingseats/totalseats) *100
+    public ResponseDto getMovies(int page, int size, String sort) {
         movieJpa.updateTicketSales();
-        // 평점 = totalscore/reviewcount
         movieJpa.updateScoreAvg();
-
         movieJpa.updateD_Day();
 
-        //2. 리스트 조회
         PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(sort.equals("1") ? "ticketSales" : "scoreAvg").descending());
-        return movieJpa.findAll(pageRequest);
+        Page<Movie> moviePage = movieJpa.findAll(pageRequest);
+        List<Movie> movies = moviePage.getContent();
+
+        if (movies.stream().toList().isEmpty()) {
+            return new ResponseDto(400, "페이지 조회 실패");
+        } else {
+            List<Object> moviesDetail = new ArrayList<>();
+
+            for (Movie movie : movies) {
+                MovieDetailResponseDto movieDetailResponseDto = movieDetails(movie.getMovieId());
+
+                moviesDetail.add(movieDetailResponseDto);
+            }
+
+            return new ResponseDto(HttpStatus.OK.value(), "페이지 조회 성공", moviesDetail);
+        }
     }
 
-    public ResponseDto movieDetails(Integer movieId) {
+    public MovieDetailResponseDto movieDetails(Integer movieId) {
         Movie movie = movieJpa.findById(movieId)
                 .orElseThrow(()-> new NotFoundException("페이지 조회 실패"));
 
@@ -74,8 +85,8 @@ public class MovieService {
                 .actorResponseDtoList(actorResponseDtoList)
                 .build();
 
-        return new ResponseDto(HttpStatus.OK.value(), "페이지 조회 성공", movieDetailResponseDto);
-        }
+        return movieDetailResponseDto;
     }
+}
 
 

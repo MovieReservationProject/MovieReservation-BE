@@ -1,10 +1,7 @@
 package com.github.moviereservationbe.web.DTO.movie;
 
 import com.github.moviereservationbe.repository.MainPage.movie.Movie;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
@@ -12,7 +9,8 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class movieResponseDto {
+@Builder
+public class MovieResponseDto {
     private Integer movieId;
     private String titleKorean;
     private String titleEnglish;
@@ -22,7 +20,7 @@ public class movieResponseDto {
     private Double scoreAvg;
     private Integer dDay;
 
-    public movieResponseDto(Movie movie) {
+    public MovieResponseDto(Movie movie) {
         this.movieId = movie.getMovieId();
         this.titleKorean = movie.getTitleKorean();
         this.titleEnglish = movie.getTitleEnglish();
@@ -33,3 +31,4 @@ public class movieResponseDto {
         this.scoreAvg = movie.getScoreAvg();
     }
 }
+

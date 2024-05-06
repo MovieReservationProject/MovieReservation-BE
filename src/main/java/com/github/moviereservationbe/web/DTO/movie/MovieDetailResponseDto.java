@@ -2,6 +2,8 @@ package com.github.moviereservationbe.web.DTO.movie;
 
 import java.util.Date;
 import java.util.List;
+
+import com.github.moviereservationbe.repository.MainPage.movie.Movie;
 import lombok.*;
 
 @Getter
@@ -28,6 +30,24 @@ public class MovieDetailResponseDto {
 
         private List<ActorResponseDto> actorResponseDtoList;
 
+        public MovieDetailResponseDto(Movie movie) {
+                this.movieId = movie.getMovieId();
+                this.titleKorean = movie.getTitleKorean();
+                this.titleEnglish = movie.getTitleEnglish();
+                this.poster = movie.getPoster();
+                this.releaseDate = movie.getReleaseDate();
+                this.ticketSales = movie.getTicketSales();
+                this.scoreAvg = movie.getScoreAvg();
+                this.dDay = movie.getDDay();
+                this.ageLimit = movie.getAgeLimit();
+                this.screenTime = movie.getScreenTime();
+                this.country = movie.getCountry();
+                this.director = movie.getDirector();
+                this.genre = movie.getGenre();
+                this.status = movie.getStatus();
+                this.summary = movie.getSummary();
+        }
+
         public MovieDetailResponseDto(Integer movieId, String titleKorean, String titleEnglish,
                                       String poster, Date releaseDate, Double ticketSales, Double scoreAvg,
                                       Integer dDay, Integer ageLimit, Integer screenTime, String country,
@@ -47,5 +67,6 @@ public class MovieDetailResponseDto {
                 this.genre = genre;
                 this.status = status;
                 this.summary = summary;
-    }
+        }
 }
+
