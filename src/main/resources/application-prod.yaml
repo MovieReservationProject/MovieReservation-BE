@@ -8,5 +8,5 @@ logging:
 
 datasource:
   driver-class-name: org.mariadb.jdbc.Driver
-  url: jdbc:mariadb://movie-database2.cn000owqib3s.ap-northeast-2.rds.amazonaws.com:3306/Project_movie_reservation?useUnicode=true&characterEncoding=UTF-8
+  url: jdbc:mariadb://database-1.c7iisia426xj.ap-northeast-2.rds.amazonaws.com:3306/CINEMA?useUnicode=true&characterEncoding=UTF-8
 
