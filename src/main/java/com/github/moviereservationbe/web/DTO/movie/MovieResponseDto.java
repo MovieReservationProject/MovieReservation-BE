@@ -31,4 +31,3 @@ public class MovieResponseDto {
         this.scoreAvg = movie.getScoreAvg();
     }
 }
-

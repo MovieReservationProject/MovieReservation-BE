@@ -23,12 +23,12 @@ public class MovieController {
         }
     }
 
-    @GetMapping("/check/{movieId}")
-    public ResponseDto movieDetails(@PathVariable Integer movieId) {
-        try {
-            return new ResponseDto(200, "페이지 조회 성공", movieService.movieDetails(movieId));
-        } catch (NotFoundException e) {
-            return new ResponseDto(400, "페이지 조회 실패");
-        }
-    }
+//    @GetMapping("/check/{movieId}")
+//    public ResponseDto movieDetails(@PathVariable Integer movieId) {
+//        try {
+//            return new ResponseDto(200, "페이지 조회 성공", movieService.movieDetails(movieId));
+//        } catch (NotFoundException e) {
+//            return new ResponseDto(400, "페이지 조회 실패");
+//        }
+//    }
 }
