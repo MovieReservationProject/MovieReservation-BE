@@ -17,6 +17,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -55,6 +56,7 @@ public class SecurityConfig {
         corsConfiguration.setAllowedMethods(List.of("GET","PUT","POST","DELETE"));
         corsConfiguration.setMaxAge(1000L*60*60);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        corsConfiguration.setExposedHeaders(Arrays.asList("Authorization", "Authorization-refresh"));
         source.registerCorsConfiguration("/**",corsConfiguration);
         return source;
     }
