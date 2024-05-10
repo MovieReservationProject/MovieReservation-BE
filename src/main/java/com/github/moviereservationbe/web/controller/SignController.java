@@ -31,6 +31,7 @@ public class SignController {
     public ResponseDto login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse httpServletResponse){
         String token= authService.login(loginRequestDto);
         httpServletResponse.setHeader("Token", token);
+        System.out.println(token);
         return new ResponseDto(HttpStatus.OK.value(), "Login Success");
     }
 
