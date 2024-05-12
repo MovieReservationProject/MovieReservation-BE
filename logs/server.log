@@ -2068,3 +2068,31 @@ java.lang.IllegalArgumentException: When allowCredentials is true, allowedOrigin
 2024-05-10 18:34:49.836 [http-nio-8080-exec-1] [34mINFO [0;39m [36mo.a.c.c.C.[Tomcat].[localhost].[/][0;39m - Initializing Spring DispatcherServlet 'dispatcherServlet'
 2024-05-10 18:34:49.836 [http-nio-8080-exec-1] [34mINFO [0;39m [36mo.s.web.servlet.DispatcherServlet[0;39m - Initializing Servlet 'dispatcherServlet'
 2024-05-10 18:34:49.839 [http-nio-8080-exec-1] [34mINFO [0;39m [36mo.s.web.servlet.DispatcherServlet[0;39m - Completed initialization in 2 ms
+2024-05-10 23:52:07.017 [main] [34mINFO [0;39m [36mc.g.m.MovieReservationBeApplication[0;39m - Starting MovieReservationBeApplication using Java 17.0.9 with PID 11945 (/Users/sohmac/Desktop/sc_portfolio/sc_java/MovieReservation-BE/build/classes/java/main started by sohmac in /Users/sohmac/Desktop/sc_portfolio/sc_java/MovieReservation-BE)
+2024-05-10 23:52:07.019 [main] [34mINFO [0;39m [36mc.g.m.MovieReservationBeApplication[0;39m - The following 1 profile is active: "prod"
+2024-05-10 23:52:07.394 [main] [34mINFO [0;39m [36mo.s.d.r.c.RepositoryConfigurationDelegate[0;39m - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-05-10 23:52:07.423 [main] [34mINFO [0;39m [36mo.s.d.r.c.RepositoryConfigurationDelegate[0;39m - Finished Spring Data repository scanning in 26 ms. Found 11 JPA repository interfaces.
+2024-05-10 23:52:07.680 [main] [34mINFO [0;39m [36mo.s.b.w.e.tomcat.TomcatWebServer[0;39m - Tomcat initialized with port 8080 (http)
+2024-05-10 23:52:07.684 [main] [34mINFO [0;39m [36mo.a.coyote.http11.Http11NioProtocol[0;39m - Initializing ProtocolHandler ["http-nio-8080"]
+2024-05-10 23:52:07.684 [main] [34mINFO [0;39m [36mo.a.catalina.core.StandardService[0;39m - Starting service [Tomcat]
+2024-05-10 23:52:07.684 [main] [34mINFO [0;39m [36mo.a.catalina.core.StandardEngine[0;39m - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-05-10 23:52:07.716 [main] [34mINFO [0;39m [36mo.a.c.c.C.[Tomcat].[localhost].[/][0;39m - Initializing Spring embedded WebApplicationContext
+2024-05-10 23:52:07.716 [main] [34mINFO [0;39m [36mo.s.b.w.s.c.ServletWebServerApplicationContext[0;39m - Root WebApplicationContext: initialization completed in 682 ms
+2024-05-10 23:52:07.804 [main] [34mINFO [0;39m [36mcom.zaxxer.hikari.HikariDataSource[0;39m - HikariPool-1 - Starting...
+2024-05-10 23:52:09.796 [main] [34mINFO [0;39m [36mcom.zaxxer.hikari.pool.HikariPool[0;39m - HikariPool-1 - Added connection org.mariadb.jdbc.Connection@5e9bf744
+2024-05-10 23:52:09.799 [main] [34mINFO [0;39m [36mcom.zaxxer.hikari.HikariDataSource[0;39m - HikariPool-1 - Start completed.
+2024-05-10 23:52:09.863 [main] [34mINFO [0;39m [36mo.h.jpa.internal.util.LogHelper[0;39m - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-05-10 23:52:09.931 [main] [34mINFO [0;39m [36morg.hibernate.Version[0;39m - HHH000412: Hibernate ORM core version 6.4.1.Final
+2024-05-10 23:52:09.948 [main] [34mINFO [0;39m [36mo.h.c.i.RegionFactoryInitiator[0;39m - HHH000026: Second-level cache disabled
+2024-05-10 23:52:10.143 [main] [34mINFO [0;39m [36mo.s.o.j.p.SpringPersistenceUnitInfo[0;39m - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-05-10 23:52:11.522 [main] [34mINFO [0;39m [36mo.h.e.t.j.p.i.JtaPlatformInitiator[0;39m - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-05-10 23:52:11.524 [main] [34mINFO [0;39m [36mo.s.o.j.LocalContainerEntityManagerFactoryBean[0;39m - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-05-10 23:52:11.757 [main] [34mINFO [0;39m [36mo.s.d.j.r.query.QueryEnhancerFactory[0;39m - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-05-10 23:52:12.300 [main] [31mWARN [0;39m [36mo.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration[0;39m - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-05-10 23:52:12.585 [main] [34mINFO [0;39m [36mo.s.s.web.DefaultSecurityFilterChain[0;39m - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@6cd8aee2, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@28f33810, org.springframework.security.web.context.SecurityContextHolderFilter@245504d, org.springframework.security.web.header.HeaderWriterFilter@4483e237, org.springframework.web.filter.CorsFilter@476d5f2e, org.springframework.security.web.authentication.logout.LogoutFilter@17f216cc, com.github.moviereservationbe.web.filters.JwtAuthenticationFilter@6e56f5d4, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4988c303, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@798ac54d, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@4750e942, org.springframework.security.web.session.SessionManagementFilter@721384e0, org.springframework.security.web.access.ExceptionTranslationFilter@30d4d6fb, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@1170d81f]
+2024-05-10 23:52:12.713 [main] [34mINFO [0;39m [36mo.a.coyote.http11.Http11NioProtocol[0;39m - Starting ProtocolHandler ["http-nio-8080"]
+2024-05-10 23:52:12.722 [main] [34mINFO [0;39m [36mo.s.b.w.e.tomcat.TomcatWebServer[0;39m - Tomcat started on port 8080 (http) with context path ''
+2024-05-10 23:52:12.728 [main] [34mINFO [0;39m [36mc.g.m.MovieReservationBeApplication[0;39m - Started MovieReservationBeApplication in 5.901 seconds (process running for 6.397)
+2024-05-10 23:59:55.263 [SpringApplicationShutdownHook] [34mINFO [0;39m [36mo.s.o.j.LocalContainerEntityManagerFactoryBean[0;39m - Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-05-10 23:59:55.278 [SpringApplicationShutdownHook] [34mINFO [0;39m [36mcom.zaxxer.hikari.HikariDataSource[0;39m - HikariPool-1 - Shutdown initiated...
+2024-05-10 23:59:55.317 [SpringApplicationShutdownHook] [34mINFO [0;39m [36mcom.zaxxer.hikari.HikariDataSource[0;39m - HikariPool-1 - Shutdown completed.
