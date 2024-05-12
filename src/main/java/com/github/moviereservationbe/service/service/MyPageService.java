@@ -55,6 +55,8 @@ public class MyPageService {
                 .titleKorean(String.valueOf(reservation.getSchedule().getMovie().getTitleKorean()))
                 .titleEnglish(String.valueOf(reservation.getSchedule().getMovie().getTitleEnglish()))
                 .cinemaName(String.valueOf(reservation.getSchedule().getCinemaType().getCinema().getCinemaName()))
+                .movieDate(reservation.getSchedule().getStartTime().toLocalDate())
+                .startTime(reservation.getSchedule().getStartTime().toLocalTime())
                 .build());
 
         // 페이징된 예약 정보를 반환
