@@ -1,7 +1,9 @@
 package com.github.moviereservationbe.web.controller;
 
+import com.github.moviereservationbe.service.exceptions.BadRequestException;
 import com.github.moviereservationbe.service.service.EmailCertificationService;
 import com.github.moviereservationbe.service.service.RedisUtil;
+import com.github.moviereservationbe.web.DTO.redis.EmailCheckRequest;
 import com.github.moviereservationbe.web.DTO.redis.EmailRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,4 +25,12 @@ public class EmailCertificationController {
        return emailCertificationService.joinEmail(emailRequest.getEmail());
     }
 
+    public String checkAuthNum(@RequestBody @Valid EmailCheckRequest emailCheckRequest){
+        Boolean checked= emailCertificationService.checkAuthNum(emailCheckRequest.getEmail(), emailCheckRequest.getAuthNum());
+        if(checked){
+            return "OK";
+        }else{
+            throw new BadRequestException("잘못된 인증 번호 입니다." +  emailCheckRequest.getAuthNum());
+        }
+    }
 }

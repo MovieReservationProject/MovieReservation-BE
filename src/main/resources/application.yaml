@@ -10,8 +10,8 @@ spring:
 #    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 
   datasource:
-    username: ENC(O96lxwPsGQwI759ISeF+lA==)
-    password: ENC(2ar45WXl0pWmg5gOMLRR2LmuGTIY+sY1)
+    username: ENC(D0TwFTGDB9dHlGX/n/fhDQ==)
+    password: ENC(1mYYleT4p8iCyvyRYYXD4c8KZMH5o3fH)
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:3306/Project_movie_reservation?useUnicode=true&characterEncoding=UTF-8
 
@@ -29,11 +29,11 @@ jasypt:
     bean: jasyptStringEncryptor
 
 email:
-  address: ENC(676rIggCNA12w8iy1K4r1Q7yp1PqzJ9XGgcrsOl7fdE=)
-  app-password: ENC(o6aFRHt8gyml6kZI+FbG/5FTwg0Do7ys) //ilovemovie
+  address: ENC(C/MpPL0ouJyA/JYMEPQrfHocYQvCMSUAOegj2aqWtc0=)
+  app-password: ENC(oerK0LFU32x7l/dB1M4R62Mu6ckN3GHLRlcll5BBb48=)
 
 jwtpassword:
-  source: ENC(gc7Nnx9mEi7UbVtWQ7aPpEY+IGRXiKXq)
+  source: ENC(JAHmuvXaq+u06FFKdeJT41aCVDmgPeTC)
 
   logging:
     level: debug

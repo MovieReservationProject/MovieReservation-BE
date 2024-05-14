@@ -11,9 +11,9 @@ import java.util.Random;
 
 @Configuration
 public class EmailCertificationConfig {
-    @Value("${email.address")
+    @Value("${email.address}")
     private String emailAddress;
-    @Value("${email.app-password")
+    @Value("${email.app-password}")
     private String appPassword;
 
     @Bean
