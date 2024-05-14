@@ -25,6 +25,7 @@ public class EmailCertificationController {
        return emailCertificationService.joinEmail(emailRequest.getEmail());
     }
 
+    @PostMapping("/check-auth-num")
     public String checkAuthNum(@RequestBody @Valid EmailCheckRequest emailCheckRequest){
         Boolean checked= emailCertificationService.checkAuthNum(emailCheckRequest.getEmail(), emailCheckRequest.getAuthNum());
         if(checked){
