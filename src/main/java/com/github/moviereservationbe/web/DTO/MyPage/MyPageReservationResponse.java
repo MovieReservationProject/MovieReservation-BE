@@ -15,6 +15,7 @@ import java.util.Date;
 @Builder
 public class MyPageReservationResponse {
     private Integer reserveId;
+    private Integer movieId;
     private String reserveNum;
     private String titleKorean;
     private String titleEnglish;

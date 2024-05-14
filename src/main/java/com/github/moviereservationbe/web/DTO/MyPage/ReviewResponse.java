@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 @Builder
 public class ReviewResponse {
     private Integer reviewId;
+    private Integer movieId;
     private String titleKorean;
     private Integer score;
     private String content;

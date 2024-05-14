@@ -54,6 +54,7 @@ public class MyPageService {
                 .reserveTime(reservation.getReserveTime())
                 .titleKorean(String.valueOf(reservation.getSchedule().getMovie().getTitleKorean()))
                 .titleEnglish(String.valueOf(reservation.getSchedule().getMovie().getTitleEnglish()))
+                .movieId(reservation.getSchedule().getMovie().getMovieId())
                 .cinemaName(String.valueOf(reservation.getSchedule().getCinemaType().getCinema().getCinemaName()))
                 .movieDate(reservation.getSchedule().getStartTime().toLocalDate())
                 .startTime(reservation.getSchedule().getStartTime().toLocalTime())
@@ -109,12 +110,13 @@ public class MyPageService {
 
         Page<Review> reviews = reviewJpa.findAllByUserId(userId, pageable);
         if (reviews.isEmpty()) {
-            throw new NotFoundException("예매 정보를 찾을 수 없습니다.");
+            throw new NotFoundException("등록된 리뷰가 존재하지 않습니다.");
         }
 
         List<ReviewResponse> reviewResponses = reviews.stream()
                 .map(review -> ReviewResponse.builder()
                         .reviewId(review.getReviewId())
+                        .movieId(review.getMovie().getMovieId())
                         .titleKorean(review.getMovie().getTitleKorean()) //한국어 제목 추가
                         .content(review.getContent())
                         .score(review.getScore()) // 평점 추가
