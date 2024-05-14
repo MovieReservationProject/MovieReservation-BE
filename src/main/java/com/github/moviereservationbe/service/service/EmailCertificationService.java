@@ -19,6 +19,7 @@ public class EmailCertificationService {
     private final JavaMailSender mailSender;
     private final RedisUtil redisUtil;
 
+
     private final int authNumber= generateRandomNumber(100000, 999999);
     @Value("${email.address")
     private String emailAddress;
@@ -46,6 +47,7 @@ public class EmailCertificationService {
             helper.setSubject(title);
             helper.setText(content, true);
             mailSender.send(message);
+            redisUtil.setDataExpire(Integer.toString(authNumber), toMail, 60*5L);
         }catch(MessagingException e){
             e.printStackTrace();
         }

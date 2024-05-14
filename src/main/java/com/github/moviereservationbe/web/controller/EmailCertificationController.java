@@ -2,7 +2,6 @@ package com.github.moviereservationbe.web.controller;
 
 import com.github.moviereservationbe.service.exceptions.BadRequestException;
 import com.github.moviereservationbe.service.service.EmailCertificationService;
-import com.github.moviereservationbe.service.service.RedisUtil;
 import com.github.moviereservationbe.web.DTO.redis.EmailCheckRequest;
 import com.github.moviereservationbe.web.DTO.redis.EmailRequest;
 import jakarta.validation.Valid;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/mail")
 public class EmailCertificationController {
     private final EmailCertificationService emailCertificationService;
-    private final RedisUtil redisUtil;
 
     @PostMapping("/send-mail")
     public String sendMail(@RequestBody @Valid EmailRequest emailRequest){
