@@ -10,13 +10,13 @@ import com.github.moviereservationbe.repository.Auth.userRole.UserRoleJpa;
 import com.github.moviereservationbe.service.exceptions.BadRequestException;
 import com.github.moviereservationbe.service.exceptions.NotFoundException;
 import com.github.moviereservationbe.web.DTO.ResponseDto;
-import com.github.moviereservationbe.web.DTO.auth.FindIdDto;
+import com.github.moviereservationbe.web.DTO.auth.FindIdPasswordDto;
 import com.github.moviereservationbe.web.DTO.auth.LoginRequestDto;
 import com.github.moviereservationbe.web.DTO.auth.SignUpRequestDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Not;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -91,9 +91,18 @@ public class AuthService {
         return true;
     }
 
-    public ResponseDto findId(FindIdDto findIdDto) {
-        User user= userJpa.findByNamePhoneNumber(findIdDto.getName(), findIdDto.getPhoneNumber())
+    public ResponseDto findId(FindIdPasswordDto findIdPasswordDto) {
+        User user= userJpa.findByNamePhoneNumber(findIdPasswordDto.getName(), findIdPasswordDto.getPhoneNumber())
                 .orElseThrow(()-> new NotFoundException("Cannot find user with name and phone number"));
-        return new ResponseDto(HttpStatus.OK.value(), "User ID found", user.getUserId());
+        return new ResponseDto(HttpStatus.OK.value(), "User ID found", user.getMyId());
+    }
+
+    public ResponseDto getNewPassword(FindIdPasswordDto findIdPasswordDto) {
+        User user= userJpa.findByMyIdFetchJoin(findIdPasswordDto.getMyId())
+                .orElseThrow(()-> new NotFoundException("Cannot find user with ID"));
+        String newPwd = RandomStringUtils.randomAlphanumeric(10);
+        user.setPassword(passwordEncoder.encode(newPwd));
+        userJpa.save(user);
+        return new ResponseDto(HttpStatus.OK.value(), "New Password.  "+ newPwd  + "  Please change your password");
     }
 }

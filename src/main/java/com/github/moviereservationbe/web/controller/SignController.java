@@ -2,7 +2,7 @@ package com.github.moviereservationbe.web.controller;
 
 import com.github.moviereservationbe.service.service.AuthService;
 import com.github.moviereservationbe.web.DTO.ResponseDto;
-import com.github.moviereservationbe.web.DTO.auth.FindIdDto;
+import com.github.moviereservationbe.web.DTO.auth.FindIdPasswordDto;
 import com.github.moviereservationbe.web.DTO.auth.LoginRequestDto;
 import com.github.moviereservationbe.web.DTO.auth.SignUpRequestDto;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +39,12 @@ public class SignController {
     }
 
     @GetMapping("/findId")
-    public ResponseDto findId(@RequestBody FindIdDto findIdDto){
-        return authService.findId(findIdDto);
+    public ResponseDto findId(@RequestBody FindIdPasswordDto findIdPasswordDto){
+        return authService.findId(findIdPasswordDto);
+    }
+
+    @PutMapping("/getPassword")
+    public ResponseDto getNewPassword(@RequestBody FindIdPasswordDto findIdPasswordDto){
+        return authService.getNewPassword(findIdPasswordDto);
     }
 }

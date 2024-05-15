@@ -9,7 +9,17 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FindIdDto {
+public class FindIdPasswordDto {
+    private String myId;
     private String name;
     private String phoneNumber;
+
+    public FindIdPasswordDto(String myId) {
+        this.myId = myId;
+    }
+
+    public FindIdPasswordDto(String name, String phoneNumber) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+    }
 }

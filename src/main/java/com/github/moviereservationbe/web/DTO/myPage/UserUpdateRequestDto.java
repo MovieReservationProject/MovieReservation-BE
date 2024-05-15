@@ -28,4 +28,8 @@ public class UserUpdateRequestDto {
     private Date birthday;
     @JsonProperty("phone-number")
     private String phoneNumber;
+
+    public UserUpdateRequestDto(String password) {
+        this.password = password;
+    }
 }
