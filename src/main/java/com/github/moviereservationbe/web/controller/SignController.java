@@ -2,16 +2,14 @@ package com.github.moviereservationbe.web.controller;
 
 import com.github.moviereservationbe.service.service.AuthService;
 import com.github.moviereservationbe.web.DTO.ResponseDto;
+import com.github.moviereservationbe.web.DTO.auth.FindIdDto;
 import com.github.moviereservationbe.web.DTO.auth.LoginRequestDto;
 import com.github.moviereservationbe.web.DTO.auth.SignUpRequestDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,5 +36,10 @@ public class SignController {
         boolean isSuccess= authService.logout(httpServletRequest, httpServletResponse);
         if(isSuccess) return new ResponseDto(HttpStatus.OK.value(), "Logout successful" );
         else return new ResponseDto(HttpStatus.BAD_REQUEST.value(), "Logout fail");
+    }
+
+    @GetMapping("/findId")
+    public ResponseDto findId(@RequestBody FindIdDto findIdDto){
+        return authService.findId(findIdDto);
     }
 }

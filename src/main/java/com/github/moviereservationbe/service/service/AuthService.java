@@ -9,11 +9,15 @@ import com.github.moviereservationbe.repository.Auth.userRole.UserRole;
 import com.github.moviereservationbe.repository.Auth.userRole.UserRoleJpa;
 import com.github.moviereservationbe.service.exceptions.BadRequestException;
 import com.github.moviereservationbe.service.exceptions.NotFoundException;
+import com.github.moviereservationbe.web.DTO.ResponseDto;
+import com.github.moviereservationbe.web.DTO.auth.FindIdDto;
 import com.github.moviereservationbe.web.DTO.auth.LoginRequestDto;
 import com.github.moviereservationbe.web.DTO.auth.SignUpRequestDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Not;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -85,5 +89,11 @@ public class AuthService {
             new SecurityContextLogoutHandler().logout(httpServletRequest, httpServletResponse, auth);
         }
         return true;
+    }
+
+    public ResponseDto findId(FindIdDto findIdDto) {
+        User user= userJpa.findByNamePhoneNumber(findIdDto.getName(), findIdDto.getPhoneNumber())
+                .orElseThrow(()-> new NotFoundException("Cannot find user with name and phone number"));
+        return new ResponseDto(HttpStatus.OK.value(), "User ID found", user.getUserId());
     }
 }

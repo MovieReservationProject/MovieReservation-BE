@@ -20,4 +20,11 @@ public interface UserJpa extends JpaRepository<User, Integer> {
     Optional<User> findByMyIdFetchJoin(String myId);
 
     boolean existsByMyId(String myId);
+
+    @Query(
+            "SELECT u " +
+                    "FROM User u " +
+                    "WHERE u.name = :name AND u.phoneNumber = :phoneNumber "
+    )
+    Optional<User> findByNamePhoneNumber(String name, String phoneNumber);
 }
