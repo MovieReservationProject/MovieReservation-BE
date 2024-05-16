@@ -12,6 +12,9 @@ import java.util.regex.Pattern;
 @AllArgsConstructor
 @Builder
 public class ReviewResponse {
+    private Integer userId;
+    private String name;
+    private String myId;
     private Integer reviewId;
     private Integer movieId;
     private String titleKorean;

@@ -97,12 +97,12 @@ public class MyPageService {
                 .myId(user.getMyId())
                 .birthday(user.getBirthday())
                 .phoneNumber(user.getPhoneNumber())
-//                .password(hashedPassword)
+//              .password(hashedPassword)
                 .build();
         return new ResponseDto(HttpStatus.OK.value(), "user detail updated successful", myPageUserDetailResponse);
     }
 
-    //리뷰 조회
+    //마이페이지 내 리뷰 조회
     public ResponseDto findAllReviews(CustomUserDetails customUserDetails, Pageable pageable) {
         int userId = userJpa.findById(customUserDetails.getUserId()).map(User::getUserId)
                 .orElseThrow(() -> new NotFoundException("아이디를 찾을 수 없습니다."));
@@ -121,6 +121,29 @@ public class MyPageService {
                         .content(review.getContent())
                         .score(review.getScore()) // 평점 추가
                         .reviewDate(review.getReviewDate()) // 리뷰 작성 날짜 추가
+                        .build())
+                .collect(Collectors.toList());
+
+        return new ResponseDto(HttpStatus.OK.value(), "", reviewResponses);
+    }
+
+    //영화상세페이지 내 리뷰 조회
+    public ResponseDto findAllReviewsByMovieId(int movieId, Pageable pageable) {
+        Page<Review> reviews = reviewJpa.findAllReviewsByMovieId(movieId, pageable);
+        if (reviews.isEmpty()){
+            throw new NotFoundException("등록된 리뷰가 존재하지 않습니다.");
+        }
+        List<ReviewResponse> reviewResponses = reviews.stream()
+                .map(review -> ReviewResponse.builder()
+                        .reviewId(review.getReviewId())
+                        .movieId(review.getMovie().getMovieId())
+                        .titleKorean(review.getMovie().getTitleKorean()) //한국어 제목 추가
+                        .userId(review.getUser().getUserId())
+                        .myId(review.getUser().getMyId())
+                        .name(review.getUser().getName()) // 사용자 이름 추가
+                        .content(review.getContent())
+                        .score(review.getScore())
+                        .reviewDate(review.getReviewDate())
                         .build())
                 .collect(Collectors.toList());
 

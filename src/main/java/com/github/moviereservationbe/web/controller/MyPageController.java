@@ -1,22 +1,17 @@
 package com.github.moviereservationbe.web.controller;
 
 import com.github.moviereservationbe.repository.Auth.userDetails.CustomUserDetails;
-import com.github.moviereservationbe.repository.MainPage.movie.Movie;
 import com.github.moviereservationbe.service.exceptions.NotFoundException;
 import com.github.moviereservationbe.service.exceptions.ReviewAlreadyExistsException;
 import com.github.moviereservationbe.service.service.MyPageService;
 import com.github.moviereservationbe.web.DTO.MyPage.*;
 import com.github.moviereservationbe.web.DTO.ResponseDto;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,9 +41,16 @@ public class MyPageController {
         }
     }
 
+    //마이페이지 리뷰
     @GetMapping("/review/list")
     public ResponseDto ReviewList(@AuthenticationPrincipal CustomUserDetails customUserDetails,Pageable pageable)
     {return myPageService.findAllReviews(customUserDetails,pageable);}
+
+    //영화상세 리뷰
+    @GetMapping("/movie/review/{movieId}")
+    public ResponseDto getMovieReviews(@PathVariable("movieId") int movieId, Pageable pageable) {
+        return myPageService.findAllReviewsByMovieId(movieId, pageable);
+    }
 
     @PutMapping("/review/update/{movieId}")
     public ResponseDto UpdateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ReviewRequest reviewRequest, @PathVariable("movieId") Integer movieId)
