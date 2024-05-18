@@ -8,23 +8,29 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of ="userId")
+@EqualsAndHashCode(of ="id")
 @Table(name= "social_user")
 public class SocialUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name= "user_id")
-    private Integer userId;
-
-    @Column(name= "id", nullable = false)
-    private String id;
-
-    @Column(name = "password", nullable = false)
-    private String password;
+    @Column(name= "id")
+    private Integer id;
 
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "nickname", nullable = false)
+    private String nickname;
 
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
+
+    public SocialUser(String email, String nickname, String password) {
+        this.email = email;
+        this.nickname = nickname;
+        this.password = password;
+    }
 }
