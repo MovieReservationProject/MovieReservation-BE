@@ -26,7 +26,7 @@ public interface MovieJpa extends JpaRepository<Movie, Integer> {
     @Modifying
     @Query(
             value = "UPDATE movie AS A " +
-                    "INNER JOIN (SELECT movie_id, (count(score) / sum(score)) AS SCORE_AVG " +
+                    "INNER JOIN (SELECT movie_id, (sum(score) / count(score)) AS SCORE_AVG " +
                     "            FROM review group by movie_id) AS B ON A.movie_id = B.movie_id " +
                     " SET A.score_avg = B.SCORE_AVG "
     , nativeQuery = true)
